@@ -1,19 +1,22 @@
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
+    private int realSize = 0;
 
     void clear() {
-        Arrays.fill(storage, null);
+        for (int i = 0; i < realSize; i++) {
+            storage[i] = null;
+        }
+        realSize = 0;
     }
 
     void save(Resume r) {
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
                 storage[i] = r;
+                realSize++;
                 break;
             }
         }
@@ -21,18 +24,21 @@ public class ArrayStorage {
 
     Resume get(String uuid) {
         Resume resume1 = null;
-        for (int i = 0; i < this.size(); i++) {
-            if (storage[i].uuid.equals(uuid)) resume1 = storage[i];
+        for (int i = 0; i < realSize; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                resume1 = storage[i];
+            }
             break;
         }
         return resume1;
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < this.size(); i++) {
+        for (int i = 0; i < realSize; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                storage[i] = this.storage[this.size() - 1];
-                storage[this.size() - 1] = null;
+                storage[i] = storage[realSize - 1];
+                storage[realSize - 1] = null;
+                realSize--;
                 break;
             }
         }
@@ -42,21 +48,14 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        Resume[] resumes = new Resume[this.size()];
-        for (int i = 0; i < this.size(); i++) {
+        Resume[] resumes = new Resume[realSize];
+        for (int i = 0; i < realSize; i++) {
             resumes[i] = storage[i];
         }
         return resumes;
     }
 
     int size() {
-        int size = 0;
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                size = i;
-                break;
-            }
-        }
-        return size;
+        return realSize;
     }
 }
