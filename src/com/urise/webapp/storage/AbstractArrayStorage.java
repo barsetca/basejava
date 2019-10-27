@@ -16,10 +16,6 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void update(Resume resume) {
-        if (resume == null) {
-            System.out.println("Error update: param = null");
-            return;
-        }
         int index = getIndex(resume.getUuid());
         if (index < 0) {
             System.out.println("update: Resume " + resume.getUuid() + " not exist");
@@ -56,11 +52,12 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(uuid);
         if (index < 0) {
             System.out.println("delete: Resume " + uuid + " not exist");
-        } else {
+            return;
+        } else if (index < size - 1) {
             shift(index);
-            storage[size - 1] = null;
-            size--;
         }
+        storage[size - 1] = null;
+        size--;
     }
 
     protected abstract void shift(int index);
