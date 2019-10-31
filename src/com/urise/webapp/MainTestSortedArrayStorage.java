@@ -7,15 +7,10 @@ public class MainTestSortedArrayStorage {
     private static final SortedArrayStorage SORTED_ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
-        Resume resume3 = new Resume();
-        resume3.setUuid("uuid3");
-        Resume resume1 = new Resume();
-        resume1.setUuid("uuid1");
-        Resume resume2 = new Resume();
-        resume2.setUuid("uuid2");
-
-        Resume resume4 = new Resume();
-        resume4.setUuid("dummy");
+        Resume resume3 = new Resume("uuid3");
+        Resume resume1 = new Resume("uuid1");
+        Resume resume2 = new Resume("uuid2");
+        Resume resume4 = new Resume("dummy");
 
         SORTED_ARRAY_STORAGE.save(resume3);
         SORTED_ARRAY_STORAGE.save(resume1);
@@ -32,9 +27,9 @@ public class MainTestSortedArrayStorage {
         SORTED_ARRAY_STORAGE.delete(resume1.getUuid());
         printAll();
 
-        resume1.setUuid("new");
+        resume1 = new Resume("new");
         SORTED_ARRAY_STORAGE.update(resume1);
-        resume2.setUuid("upgrade");
+        resume2 = new Resume("upgrade");
         SORTED_ARRAY_STORAGE.update(resume2);
         printAll();
 
