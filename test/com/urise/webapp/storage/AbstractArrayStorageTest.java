@@ -13,9 +13,9 @@ import static com.urise.webapp.storage.AbstractArrayStorage.STORAGE_LIMIT;
 
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
-    private Resume resume1;
-    private Resume resume2;
-    private Resume resume3;
+    private Resume resume1 = new Resume(UUID_1);
+    private Resume resume2 = new Resume(UUID_2);
+    private Resume resume3 = new Resume(UUID_3);
     private Resume resume4 = new Resume(UUID_4);
 
     private static final String UUID_1 = "uuid1";
@@ -26,9 +26,6 @@ public abstract class AbstractArrayStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        resume1 = new Resume(UUID_1);
-        resume2 = new Resume(UUID_2);
-        resume3 = new Resume(UUID_3);
         storage.save(resume1);
         storage.save(resume2);
         storage.save(resume3);
@@ -77,20 +74,17 @@ public abstract class AbstractArrayStorageTest {
         Assert.assertEquals(4, storage.size());
     }
 
-    @Test
+    @Test(expected = StorageException.class)
     public void saveOverflow() {
         storage.clear();
-        for (int i = 0; i < STORAGE_LIMIT; i++) {
-            storage.save(new Resume());
-        }
-        Assert.assertEquals(STORAGE_LIMIT, storage.size());
-
         try {
-            storage.save(new Resume());
-            Assert.fail("Expected an StorageException to be thrown");
+            for (int i = 0; i < STORAGE_LIMIT; i++) {
+                storage.save(new Resume());
+            }
         } catch (StorageException e) {
-            Assert.assertNotEquals("", e.getMessage());
+            Assert.fail("StorageException so early");
         }
+        storage.save(new Resume());
     }
 
     @Test(expected = ExistStorageException.class)
