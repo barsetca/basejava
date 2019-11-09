@@ -1,12 +1,16 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ListStorage extends AbstractStorage {
-    protected List<Resume> storage = new ArrayList<>();
+public class MapStorage extends AbstractStorage {
+
+    protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
     public int size() {
@@ -20,36 +24,34 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public void updateResume(Resume resume, int index) {
-        storage.set(index, resume);
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
     public void insertElement(Resume resume, int index) {
-        storage.add(resume);
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
     public Resume getResume(int index, String uuid) {
-        return storage.get(index);
+        return storage.get(uuid);
     }
 
     @Override
     public void fillDeletedElement(int index, String uuid) {
-        storage.remove(index);
+        storage.remove(uuid);
     }
 
     @Override
     public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+        List<Resume> resumes = new ArrayList<>();
+        storage.forEach((key, value) -> resumes.add(value));
+        return resumes.toArray(new Resume[0]);
     }
 
     @Override
     protected int getIndex(String uuid) {
-        for (int i = 0; i < storage.size(); i++) {
-            if (uuid.equals(storage.get(i).getUuid())) {
-                return i;
-            }
-        }
+        if (storage.containsKey(uuid)) return 1;
         return -1;
     }
 }

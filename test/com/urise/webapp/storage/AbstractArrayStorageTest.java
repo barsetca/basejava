@@ -23,6 +23,10 @@ public abstract class AbstractArrayStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
+    public AbstractArrayStorageTest(Storage storage) {
+        this.storage = storage;
+    }
+
     @Before
     public void setUp() {
         storage.clear();
@@ -31,9 +35,7 @@ public abstract class AbstractArrayStorageTest {
         storage.save(resume3);
     }
 
-    public AbstractArrayStorageTest(Storage storage) {
-        this.storage = storage;
-    }
+
 
     @Test
     public void size() {
