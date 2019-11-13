@@ -1,6 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -23,22 +22,24 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public void updateResume(Resume resume, int index) {
+    //выброс исключения
+    public void updateResume(Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    public void insertElement(Resume resume, int index) {
+    //выброс исключения
+    public void saveResume(Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    public Resume getResume(int index, String uuid) {
+    public Resume getResume(String uuid) {
         return storage.get(uuid);
     }
 
     @Override
-    public void fillDeletedElement(int index, String uuid) {
+    public void deleteResume(String uuid) {
         storage.remove(uuid);
     }
 

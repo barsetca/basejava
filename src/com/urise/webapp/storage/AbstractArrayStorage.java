@@ -15,7 +15,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
 
     @Override
-    public int size(){
+    public int size() {
         return size;
     }
 
@@ -26,33 +26,45 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public void updateResume(Resume resume, int index) {
-        storage[index] = resume;
+    public void updateResume(Resume resume) {
+        storage[getIndex(resume.getUuid())] = resume;
     }
 
     @Override
-    public Resume getResume(int index, String uuid) {
-        return storage[index];
+    public void saveResume(Resume resume) {
+
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", resume.getUuid());
+        } else {
+            insertElement(resume);
+            size++;
+        }
     }
 
+    @Override
+    public void deleteResume(String uuid) {
+        fillDeletedElement(uuid);
+        storage[size - 1] = null;
+        size--;
+    }
+
+    @Override
+    public Resume getResume(String uuid) {
+        return storage[getIndex(uuid)];
+    }
+
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
     @Override
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
     @Override
-    protected void insertElement(Resume resume, int index) {
-        if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", resume.getUuid());
-        } else {
-            insertElementArray(resume, index);
-        }
-    }
-    @Override
     protected abstract int getIndex(String uuid);
 
-    @Override
-    protected abstract void fillDeletedElement(int index, String uuid);
+    protected abstract void fillDeletedElement(String uuid);
 
-    protected abstract void insertElementArray(Resume resume, int index);
+    protected abstract void insertElement(Resume resume);
 }

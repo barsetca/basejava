@@ -19,23 +19,23 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void updateResume(Resume resume, int index) {
-        storage.set(index, resume);
+    public void updateResume(Resume resume) {
+        storage.set(getIndex(resume.getUuid()), resume);
     }
 
     @Override
-    public void insertElement(Resume resume, int index) {
+    public void saveResume(Resume resume) {
         storage.add(resume);
     }
 
     @Override
-    public Resume getResume(int index, String uuid) {
-        return storage.get(index);
+    public Resume getResume(String uuid) {
+        return storage.get(getIndex(uuid));
     }
 
     @Override
-    public void fillDeletedElement(int index, String uuid) {
-        storage.remove(index);
+    public void deleteResume(String uuid) {
+        storage.remove(get(uuid));
     }
 
     @Override
