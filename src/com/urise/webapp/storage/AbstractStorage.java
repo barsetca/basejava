@@ -6,12 +6,10 @@ import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
-
     @Override
     public void update(Resume resume) {
-        if (isExist(resume.getUuid())) {
-            throw new NotExistStorageException(resume.getUuid());
-        } else updateResume(resume);
+        checkNotExist(resume.getUuid());
+        updateResume(resume);
     }
 
     @Override
@@ -25,15 +23,14 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        if (isExist(uuid)) throw new NotExistStorageException(uuid);
+        checkNotExist(uuid);
         return getResume(uuid);
     }
 
     @Override
     public void delete(String uuid) {
-        if (isExist(uuid)) {
-            throw new NotExistStorageException(uuid);
-        } else deleteResume(uuid);
+        checkNotExist(uuid);
+        deleteResume(uuid);
     }
 
     @Override
@@ -44,11 +41,11 @@ public abstract class AbstractStorage implements Storage {
         return index < 0;
     }
 
-    @Override
-    public abstract int size();
-
-    @Override
-    public abstract void clear();
+    private void checkNotExist(String uuid) {
+        if (isExist(uuid)) {
+            throw new NotExistStorageException(uuid);
+        }
+    }
 
     protected abstract void updateResume(Resume resume);
 
