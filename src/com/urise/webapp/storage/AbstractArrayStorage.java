@@ -60,9 +60,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
-    @Override
-    protected abstract int getIndex(String uuid);
-
     protected abstract void fillDeletedElement(int index);
 
     protected abstract void insertElement(int index, Resume resume);
