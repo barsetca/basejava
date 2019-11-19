@@ -8,49 +8,51 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        int searchKey = checkExist(resume.getUuid());
+        Object searchKey = checkExist(resume.getUuid());
         updateResume(searchKey, resume);
     }
 
     @Override
     public void save(Resume resume) {
-        int searchKey = checkNotExist(resume.getUuid());
+        Object searchKey = checkNotExist(resume.getUuid());
         saveResume(searchKey, resume);
     }
 
     @Override
     public Resume get(String uuid) {
-        int searchKey = checkExist(uuid);
-        return getResume(searchKey, uuid);
+        Object searchKey = checkExist(uuid);
+        return getResume(searchKey);
     }
 
     @Override
     public void delete(String uuid) {
-        int searchKey = checkExist(uuid);
-        deleteResume(searchKey, uuid);
+        Object searchKey = checkExist(uuid);
+        deleteResume(searchKey);
     }
 
-    private int checkExist(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey < 0) {
+    private Object checkExist(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (notExist(uuid)) {
             throw new NotExistStorageException(uuid);
         } else return searchKey;
     }
 
-    private int checkNotExist(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey >= 0) {
+    private Object checkNotExist(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!notExist(uuid)) {
             throw new ExistStorageException(uuid);
         } else return searchKey;
     }
 
-    protected abstract void updateResume(int searchKey, Resume resume);
+    protected abstract boolean notExist(String uuid);
 
-    protected abstract Resume getResume(int searchKey, String uuid);
+    protected abstract void updateResume(Object searchKey, Resume resume);
 
-    protected abstract void saveResume(int searchKey, Resume resume);
+    protected abstract Resume getResume(Object searchKey);
 
-    protected abstract int getSearchKey(String uuid);
+    protected abstract void saveResume(Object searchKey, Resume resume);
 
-    protected abstract void deleteResume(int searchKey, String uuid);
+    protected abstract Object getSearchKey(String uuid);
+
+    protected abstract void deleteResume(Object searchKey);
 }
