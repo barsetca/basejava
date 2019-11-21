@@ -61,7 +61,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllTest() {
         Resume[] testStorage = storage.getAll();
-        Resume[] storageArray = new Resume[]{storage.get(UUID_1), storage.get(UUID_2), storage.get(UUID_3)};
+        Resume[] storageArray = {resume1, resume2, resume3};
         Arrays.sort(testStorage);
         assertEquals(3, storage.getAll().length);
         assertArrayEquals(testStorage, storageArray);

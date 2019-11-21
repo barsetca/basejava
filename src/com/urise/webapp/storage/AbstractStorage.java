@@ -32,19 +32,19 @@ public abstract class AbstractStorage implements Storage {
 
     private Object checkExist(String uuid) {
         Object searchKey = getSearchKey(uuid);
-        if (notExist(uuid)) {
+        if (notExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else return searchKey;
     }
 
     private Object checkNotExist(String uuid) {
         Object searchKey = getSearchKey(uuid);
-        if (!notExist(uuid)) {
+        if (!notExist(searchKey)) {
             throw new ExistStorageException(uuid);
         } else return searchKey;
     }
 
-    protected abstract boolean notExist(String uuid);
+    protected abstract boolean notExist(Object searchKey);
 
     protected abstract void updateResume(Object searchKey, Resume resume);
 
