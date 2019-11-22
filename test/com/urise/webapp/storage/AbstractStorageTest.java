@@ -6,7 +6,6 @@ import com.urise.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,20 +13,15 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
     protected Storage storage;
-    private Resume resume1 = new Resume(UUID_1, A);
-    private Resume resume2 = new Resume(UUID_2, B);
-    private Resume resume3 = new Resume(UUID_3, C);
-    private Resume resume4 = new Resume(UUID_4, D);
+    private Resume resume1 = new Resume(UUID_1, "a");
+    private Resume resume2 = new Resume(UUID_2, "b");
+    private Resume resume3 = new Resume(UUID_3, "c");
+    private Resume resume4 = new Resume(UUID_4, "d");
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
-
-    private static final String A = "a";
-    private static final String B = "b";
-    private static final String C = "c";
-    private static final String D = "d";
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -54,11 +48,8 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void updateTest() {
-        String test = "ch";
-        resume3.setFullName(test);
         storage.update(resume3);
         assertEquals(resume3, storage.get(UUID_3));
-        assertEquals(test, storage.get(UUID_3).getFullName());
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -70,9 +61,9 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSortedTest() {
         List<Resume> testStorage = storage.getAllSorted();
-        List<Resume> storageArray = new ArrayList<>(Arrays.asList(resume1, resume2, resume3));
+        List<Resume> storageArray = Arrays.asList(resume1, resume2, resume3);
         assertEquals(3, testStorage.size());
-        assertEquals(testStorage, storageArray);
+        assertEquals(storageArray, testStorage);
     }
 
     @Test

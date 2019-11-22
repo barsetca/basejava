@@ -2,7 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-public class MapStorageUuid extends MapStorage {
+public class MapStorageUuid extends AbstractMapStorage {
 
     @Override
     protected boolean notExist(Object uuid) {

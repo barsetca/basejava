@@ -2,7 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-public class MapStorageResume extends MapStorage {
+public class MapStorageResume extends AbstractMapStorage {
 
     @Override
     protected boolean notExist(Object searchKey) {
