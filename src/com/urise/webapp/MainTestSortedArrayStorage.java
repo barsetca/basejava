@@ -12,10 +12,9 @@ public class MainTestSortedArrayStorage {
         Resume resume2 = new Resume("uuid2", "a");
         Resume resume4 = new Resume("dummy", "b");
 
-        SORTED_ARRAY_STORAGE.save(resume3);
         SORTED_ARRAY_STORAGE.save(resume1);
         SORTED_ARRAY_STORAGE.save(resume2);
-
+        SORTED_ARRAY_STORAGE.save(resume3);
         printAll();
 
         System.out.println("Get resume1: " + SORTED_ARRAY_STORAGE.get(resume1.getUuid()));

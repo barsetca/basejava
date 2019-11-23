@@ -58,9 +58,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     @Override
-    public List<Resume> getList(List<Resume> resumes) {
-        resumes = new ArrayList<>(Arrays.asList(storage).subList(0, size));
-        return resumes;
+    public List<Resume> getList() {
+        return new ArrayList<>(Arrays.asList(storage).subList(0, size));
     }
 
     @Override
