@@ -2,11 +2,33 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-public class MapStorageResume extends AbstractMapStorage {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MapStorageResume extends AbstractStorage<Resume> {
+
+    protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected boolean notExist(Object searchKey) {
-        return searchKey == null;
+    public int size() {
+        return storage.size();
+    }
+
+    @Override
+    public void clear() {
+        storage.clear();
+    }
+
+    @Override
+    public List<Resume> getCopyList() {
+        return new ArrayList<>(storage.values());
+    }
+
+    @Override
+    protected boolean notExist(Resume resumeSearchKey) {
+        return resumeSearchKey == null;
     }
 
     @Override
@@ -15,22 +37,22 @@ public class MapStorageResume extends AbstractMapStorage {
     }
 
     @Override
-    public Resume getResume(Object searchKey) {
-        return (Resume) searchKey;
+    public Resume getResume(Resume resumeSearchKey) {
+        return  resumeSearchKey;
     }
 
     @Override
-    public void deleteResume(Object searchKey) {
-        storage.remove(((Resume) searchKey).getUuid());
+    public void deleteResume(Resume resumeSearchKey) {
+        storage.remove(resumeSearchKey.getUuid());
     }
 
     @Override
-    public void saveResume(Object searchKey, Resume resume) {
+    public void saveResume(Resume resumeSearchKey, Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    public void updateResume(Object searchKey, Resume resume) {
-        storage.put(resume.getUuid(), resume);
+    public void updateResume(Resume resumeSearchKey, Resume resume) {
+        storage.put(resumeSearchKey.getUuid(), resume);
     }
 }

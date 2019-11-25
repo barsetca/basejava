@@ -1,11 +1,11 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.AbstractMapStorage;
 import com.urise.webapp.storage.MapStorageUuid;
+import com.urise.webapp.storage.Storage;
 
 public class MainTestMapStorage {
-    private static final AbstractMapStorage LIST_STORAGE = new MapStorageUuid();
+    private static final Storage LIST_STORAGE = new MapStorageUuid();
 
     public static void main(String[] args) {
         Resume resume3 = new Resume("uuid3", "c");

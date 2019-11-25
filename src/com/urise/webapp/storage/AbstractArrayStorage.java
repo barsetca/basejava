@@ -3,14 +3,13 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Array based storage for Resumes
  */
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
 
     protected static final int STORAGE_LIMIT = 10_000;
     protected int size = 0;
@@ -28,43 +27,43 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public void updateResume(Object index, Resume resume) {
-        storage[(int) index] = resume;
+    public void updateResume(Integer index, Resume resume) {
+        storage[index] = resume;
     }
 
     @Override
-    public void saveResume(Object index, Resume resume) {
+    public void saveResume(Integer index, Resume resume) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         } else {
-            insertElement((int) index, resume);
+            insertElement(index, resume);
             size++;
         }
     }
 
     @Override
-    public void deleteResume(Object index) {
-        fillDeletedElement((int) index);
+    public void deleteResume(Integer index) {
+        fillDeletedElement((index));
         storage[size - 1] = null;
         size--;
     }
 
     @Override
-    public Resume getResume(Object index) {
-        return storage[(int) index];
+    public Resume getResume(Integer index) {
+        return storage[index];
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     @Override
-    public List<Resume> getList() {
-        return new ArrayList<>(Arrays.asList(storage).subList(0, size));
+    public List<Resume> getCopyList() {
+        return Arrays.asList(storage).subList(0, size);
     }
 
     @Override
-    protected boolean notExist(Object index) {
-        return (int) index < 0;
+    protected boolean notExist(Integer index) {
+        return index < 0;
     }
 
     protected abstract Integer getSearchKey(String uuid);
