@@ -3,6 +3,7 @@ package com.urise.webapp.model;
 public enum ContactsType {
     MOBIL("Мобильный телефон"),
     HOME_PHONE("Домашний телефон"),
+    SKYPE("Скайп"),
     E_MAIL("Адрес электронной почты"),
     PROFILE_LINKEDIN("Профиль LinkedIn"),
     PROFILE_GITHUB("Профиль GitHub"),

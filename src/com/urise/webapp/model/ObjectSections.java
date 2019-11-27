@@ -1,27 +1,26 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ListData extends AbstractSections<List<String>> {
+public class ObjectSections extends AbstractSections {
 
-    private List<String> data = new ArrayList<>();
+    private final List<Place> data;
 
-    public List<String> getData() {
-        return data;
+    public ObjectSections(List<Place> data) {
+        this.data = data;
     }
 
-    public void setData(String...data) {
-        this.data.add(data[0]);
+    public List<Place> getData() {
+        return data;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ListData listData = (ListData) o;
-        return Objects.equals(data, listData.data);
+        ObjectSections that = (ObjectSections) o;
+        return Objects.equals(data, that.data);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class ListData extends AbstractSections<List<String>> {
 
     @Override
     public String toString() {
-       return data +"";
-
+        return "\n" + data +
+                '}';
     }
 }
