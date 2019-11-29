@@ -4,11 +4,15 @@ import com.urise.webapp.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ResumeTestData {
 
+
+
     public static void main(String[] args) {
+
         Resume resume = new Resume("Григорий Кислин");
         resume.setContactInfo(ContactsType.MOBIL, "+7(921) 855-0482 ");
         resume.setContactInfo(ContactsType.HOME_PHONE, "");
@@ -25,8 +29,8 @@ public class ResumeTestData {
                 "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры"));
         resume.setSectionInfo(SectionType.ACHIEVEMENT, new ListSections(fillListAchievement()));
         resume.setSectionInfo(SectionType.QUALIFICATION, new ListSections(fillListQualification()));
-        resume.setSectionInfo(SectionType.EXPERIENCE, new ObjectSections(fillListExperience()));
-        resume.setSectionInfo(SectionType.EDUCATION, new ObjectSections(fillListEducation()));
+        resume.setSectionInfo(SectionType.EXPERIENCE, new PlaceSections(fillListExperience()));
+        resume.setSectionInfo(SectionType.EDUCATION, new PlaceSections(fillListEducation()));
 
         System.out.println(resume.getFullName());
 
@@ -47,80 +51,71 @@ public class ResumeTestData {
                 "Более 1000 выпускников.");
         list.add("\nРеализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. " +
                 "Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
-        list.add("\nНалаживание процесса разработки и непрерывной интеграции ERP системы River BPM. " +
-                "Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: " +
-                "Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, " +
-                "интеграция CIFS/SMB java сервера");
-        list.add("\nРеализация c нуля Rich Internet Application приложения на стеке технологий JPA, Spring, Spring-MVC, " +
-                "GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
-        list.add("\nСоздание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов " +
-                "(SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии " +
-                "через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и мониторинга " +
-                "системы по JMX (Jython/ Django).");
-        list.add("\nРеализация протоколов по приему платежей всех основных платежных системы России" +
-                " (Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
+//        list.add("\nНалаживание процесса разработки и непрерывной интеграции ERP системы River BPM. " +
+//                "Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: " +
+//                "Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, " +
+//                "интеграция CIFS/SMB java сервера");
+//        list.add("\nРеализация c нуля Rich Internet Application приложения на стеке технологий JPA, Spring, Spring-MVC, " +
+//                "GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
+//        list.add("\nСоздание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов " +
+//                "(SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии " +
+//                "через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и мониторинга " +
+//                "системы по JMX (Jython/ Django).");
+//        list.add("\nРеализация протоколов по приему платежей всех основных платежных системы России" +
+//                " (Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
         return list;
     }
 
     public static List<String> fillListQualification() {
         List<String> list = new ArrayList<>();
         list.add("\nJEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
-        list.add("\nVersion control: Subversion, Git, Mercury, ClearCase, Perforce");
-        list.add("\nDB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle, " +
-                "MySQL, SQLite, MS SQL, HSQLDB");
-        list.add("\nLanguages: Java, Scala, Python/Jython/PL-Python, JavaScript, Groovy," +
-                "XML/XSD/XSLT, SQL, C/C++, Unix shell scripts");
-        list.add("\nJava Frameworks: Java 8 (Time API, Streams), Guava, Java Executor, MyBatis, " +
-                "Spring (MVC, Security, Data, Clouds, Boot), JPA (Hibernate, EclipseLink), " +
-                "Guice, GWT(SmartGWT, ExtGWT/GXT), Vaadin, Jasperreports, Apache Commons, " +
-                "Eclipse SWT, JUnit, Selenium (htmlelements).");
-        list.add("\nJavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js");
-        list.add("\nScala: SBT, Play2, Specs2, Anorm, Spray, Akka");
-        list.add("\nТехнологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, " +
-                "MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT.");
-        list.add("\nИнструменты: Maven + plugin development, Gradle, настройка Ngnix,");
-        list.add("\nадминистрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, " +
-                "OpenCmis, Bonita, pgBouncer.");
-        list.add("\nОтличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, " +
-                "UML, функционального программирования");
-        list.add("\nРодной русский, английский \"upper intermediate\"");
+//        list.add("\nVersion control: Subversion, Git, Mercury, ClearCase, Perforce");
+//        list.add("\nDB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle, " +
+//                "MySQL, SQLite, MS SQL, HSQLDB");
+//        list.add("\nLanguages: Java, Scala, Python/Jython/PL-Python, JavaScript, Groovy," +
+//                "XML/XSD/XSLT, SQL, C/C++, Unix shell scripts");
+//        list.add("\nJava Frameworks: Java 8 (Time API, Streams), Guava, Java Executor, MyBatis, " +
+//                "Spring (MVC, Security, Data, Clouds, Boot), JPA (Hibernate, EclipseLink), " +
+//                "Guice, GWT(SmartGWT, ExtGWT/GXT), Vaadin, Jasperreports, Apache Commons, " +
+//                "Eclipse SWT, JUnit, Selenium (htmlelements).");
+//        list.add("\nJavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js");
+//        list.add("\nScala: SBT, Play2, Specs2, Anorm, Spray, Akka");
+//        list.add("\nТехнологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, " +
+//                "MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT.");
+//        list.add("\nИнструменты: Maven + plugin development, Gradle, настройка Ngnix,");
+//        list.add("\nадминистрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, " +
+//                "OpenCmis, Bonita, pgBouncer.");
+//        list.add("\nОтличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, " +
+//                "UML, функционального программирования");
+//        list.add("\nРодной русский, английский \"upper intermediate\"");
 
         return list;
     }
 
     public static List<Place> fillListExperience() {
         List<Place> list = new ArrayList<>();
+        list.add(new Place("\nSiemens AG",
+                "\nhttps://www.siemens.com/ru/ru/home.html",
+                Arrays.asList(new PlaceDescription(LocalDate.of(2005, 1, 1),
+                        LocalDate.of(2007, 2, 1), "\nРазработчик ПО",
+                        "\nРазработка информационной модели, проектирование интерфейсов, " +
+                                "реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)."))));
 
-        list.add(new Place(LocalDate.of(1987, 9, 1),
-                LocalDate.of(1993, 7, 1),
-                "\nСанкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики",
-                "\nhttp://www.ifmo.ru/",
-                "\nИнженер (программист Fortran, C)",
-                ""));
-        list.add(new Place(LocalDate.of(1984, 9, 1),
-                LocalDate.of(1987, 6, 1),
-                "\nЗаочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/",
-                "\nЗакончил с отличием",
-                ""));
 
         return list;
     }
 
     public static List<Place> fillListEducation() {
         List<Place> list = new ArrayList<>();
-
-        list.add(new Place(LocalDate.of(2012, 4, 1),
-                LocalDate.of(2014, 10, 1),
-                "Siemens AG", "https://www.siemens.com/ru/ru/home.html",
-                "Разработчик ПО",
-                "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на " +
-                        "мобильной IN платформе Siemens @vantage (Java, Unix)."));
-        list.add(new Place(LocalDate.of(1997, 9, 1),
-                LocalDate.of(2005, 1, 1),
-                "Alcatel", "http://www.alcatel.ru/",
-                "Инженер по аппаратному и программному тестированию",
-                "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)."));
-
+        list.add(new Place(
+                "\nСанкт-Петербургский национальный исследовательский университет информационных технологий, " +
+                        "механики и оптики",
+                "\nhttp://www.ifmo.ru/",
+                Arrays.asList(new PlaceDescription(LocalDate.of(1993, 9, 1),
+                        LocalDate.of(1996, 7, 1), "\nАспирантура (программист С, С++)",
+                        "" ), new PlaceDescription(LocalDate.of(1987, 9, 1),
+                        LocalDate.of(1993, 7, 1), "\nИнженер (программист Fortran, C)",
+                        "" ))));
         return list;
     }
 }

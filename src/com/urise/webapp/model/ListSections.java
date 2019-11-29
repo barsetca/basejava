@@ -5,14 +5,15 @@ import java.util.Objects;
 
 public class ListSections extends AbstractSections {
 
-    private final List<String> data;
+    private final List<String> items;
 
-    public ListSections(List<String> data) {
-        this.data = data;
+    public ListSections(List<String> items) {
+        Objects.requireNonNull(items , "items must not be null");
+        this.items = items;
     }
 
-    public List<String> getData() {
-        return data;
+    public List<String> getItems() {
+        return items;
     }
 
     @Override
@@ -20,17 +21,17 @@ public class ListSections extends AbstractSections {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListSections that = (ListSections) o;
-        return Objects.equals(data, that.data);
+        return items.equals(that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(data);
+        return Objects.hash(items);
     }
 
     @Override
     public String toString() {
-        return "\n" + data +
+        return "\n" + items +
                 '}';
     }
 }

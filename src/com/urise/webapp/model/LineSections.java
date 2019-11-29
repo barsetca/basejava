@@ -4,14 +4,15 @@ import java.util.Objects;
 
 public class LineSections extends AbstractSections {
 
-    private final String data;
+    private final String text;
 
-    public LineSections(String data) {
-        this.data = data;
+    public LineSections(String text) {
+        Objects.requireNonNull(text , "text must not be null");
+        this.text = text;
     }
 
-    public String getData() {
-        return data;
+    public String getText() {
+        return text;
     }
 
     @Override
@@ -19,16 +20,16 @@ public class LineSections extends AbstractSections {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LineSections that = (LineSections) o;
-        return Objects.equals(data, that.data);
+        return text.equals(that.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(data);
+        return Objects.hash(text);
     }
 
     @Override
     public String toString() {
-        return data;
+        return text;
     }
 }

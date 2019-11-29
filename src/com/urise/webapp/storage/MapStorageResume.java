@@ -27,8 +27,8 @@ public class MapStorageResume extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected boolean notExist(Resume resumeSearchKey) {
-        return resumeSearchKey == null;
+    protected boolean Exist(Resume resumeSearchKey) {
+        return resumeSearchKey != null;
     }
 
     @Override

@@ -51,14 +51,13 @@ public class Resume implements Comparable<Resume> {
         sectionsMap.put(sectionType, section);
     }
 
-    public void setContactInfo(ContactsType type, String data) {
-        contactsMap.put(type, data);
-    }
-
     public String getContactInfo(ContactsType contactType) {
         return contactsMap.get(contactType);
     }
 
+    public void setContactInfo(ContactsType type, String data) {
+        contactsMap.put(type, data);
+    }
 
     @Override
     public boolean equals(Object o) {
