@@ -1,14 +1,12 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.*;
-import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,65 +14,21 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
     protected Storage storage;
-    private Resume resume1 = new Resume(UUID_1, "a");
-    private Resume resume2 = new Resume(UUID_2, "b");
-    private Resume resume3 = new Resume(UUID_3, "c");
-    private Resume resume4 = new Resume(UUID_4, "d");
+    private static Resume resume1;
+    private static Resume resume2;
+    private static Resume resume3;
+    private static Resume resume4;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    {
-        resume1.setContactInfo(ContactsType.MOBIL, "+7(921) 855-0482 ");
-        resume1.setContactInfo(ContactsType.E_MAIL, "a@yandex.ru");
-        resume2.setContactInfo(ContactsType.MOBIL, "+7(911) 855-0482 ");
-        resume2.setContactInfo(ContactsType.E_MAIL, "b@yandex.ru");
-        resume3.setContactInfo(ContactsType.MOBIL, "+7(812) 855-0482 ");
-        resume3.setContactInfo(ContactsType.E_MAIL, "c@yandex.ru");
-        resume4.setContactInfo(ContactsType.MOBIL, "+7(495) 855-0482 ");
-        resume4.setContactInfo(ContactsType.E_MAIL, "d@yandex.ru");
-
-        resume1.setSectionInfo(SectionType.OBJECTIVE, new LineSections("Ведущий стажировок"));
-        resume1.setSectionInfo(SectionType.PERSONAL, new LineSections("Аналитический склад ума"));
-        resume2.setSectionInfo(SectionType.OBJECTIVE, new LineSections("Догист"));
-        resume2.setSectionInfo(SectionType.PERSONAL, new LineSections("Cильная логика"));
-        resume3.setSectionInfo(SectionType.OBJECTIVE, new LineSections("Дизайнер"));
-        resume3.setSectionInfo(SectionType.PERSONAL, new LineSections("Креативность"));
-        resume4.setSectionInfo(SectionType.OBJECTIVE, new LineSections("Продакт-менеджер"));
-        resume4.setSectionInfo(SectionType.PERSONAL, new LineSections("Инициативность"));
-
-        resume1.setSectionInfo(SectionType.ACHIEVEMENT,
-                new ListSections(Arrays.asList("База данных резюме", "Маркет плайс Заплати и будь стастлив")));
-        resume2.setSectionInfo(SectionType.ACHIEVEMENT,
-                new ListSections(Arrays.asList("База данных контактов", "Приложение Управляй безопасностью данных")));
-        resume3.setSectionInfo(SectionType.ACHIEVEMENT,
-                new ListSections(Arrays.asList("База продуктовых предложений", "Сборник консольных игр")));
-        resume4.setSectionInfo(SectionType.ACHIEVEMENT,
-                new ListSections(Arrays.asList("Овощная база", "База сервтификатов и лицензий")));
-
-        resume1.setSectionInfo(SectionType.EXPERIENCE,
-                new PlaceSections(Arrays.asList(
-                        new Place("\nSiemens AG","\nhttps://www.siemens.com/ru/ru/home.html",
-                                Arrays.asList(
-                                        new PlaceDescription(
-                                                DateUtil.of(2005, Month.JANUARY),
-                                                DateUtil.of(2007, Month.FEBRUARY),
-                                                "\nРазработчик ПО",
-                                                "\nРазработка информационной модели"))))));
-        resume1.setSectionInfo(SectionType.EDUCATION,
-                new PlaceSections(Arrays.asList(
-                        new Place("\nЛИТМО","\n\nhttp://www.ifmo.ru/",
-                                Arrays.asList(
-                                        new PlaceDescription(
-                                                DateUtil.of(1993, Month.SEPTEMBER),
-                                                DateUtil.of(1996, Month.JULY),
-                                                "\nпрограммист С, С++",""),
-                                        new PlaceDescription(
-                                                DateUtil.of(1987, Month.SEPTEMBER),
-                                                DateUtil.of(1993, Month.JULY),
-                                                "\nИнженер (программист Fortran, C)",""))))));
+    static {
+        resume1 = ResumeTestData.createResume(UUID_1, "a");
+        resume2 = ResumeTestData.createResume(UUID_2, "b");
+        resume3 = ResumeTestData.createResume(UUID_3, "c");
+        resume4 = ResumeTestData.createResume(UUID_4, "d");
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -91,7 +45,6 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void sizeTest() {
-        System.out.println(resume1);
         assertEquals(3, storage.size());
     }
 
