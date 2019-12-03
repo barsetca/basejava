@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage <Integer> {
+public class ListStorage extends AbstractStorage<Integer> {
 
     protected List<Resume> storage = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class ListStorage extends AbstractStorage <Integer> {
     }
 
     @Override
-    protected boolean Exist(Integer index) {
+    protected boolean isExist(Integer index) {
         return index >= 0;
     }
 

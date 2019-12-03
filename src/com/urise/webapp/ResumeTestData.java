@@ -1,13 +1,14 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.*;
-import com.urise.webapp.util.DateUtil;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.urise.webapp.util.DateUtil.of;
 
 public class ResumeTestData {
 
@@ -95,12 +96,13 @@ public class ResumeTestData {
 
     public static List<Place> fillListExperience() {
         List<Place> list = new ArrayList<>();
-        list.add(new Place("\nSiemens AG",
-                "\nhttps://www.siemens.com/ru/ru/home.html",
-                Arrays.asList(new PlaceDescription(LocalDate.of(2005, 1, 1),
-                        LocalDate.of(2007, 2, 1), "\nРазработчик ПО",
-                        "\nРазработка информационной модели, проектирование интерфейсов, " +
-                                "реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)."))));
+        list.add(
+                new Place(new PlaceLink("\nSiemens AG",
+                        "\nhttps://www.siemens.com/ru/ru/home.html"),
+                        Arrays.asList(new Place.PlaceDescription(LocalDate.of(2005, 1, 1),
+                                LocalDate.of(2007, 2, 1), "\nРазработчик ПО",
+                                "\nРазработка информационной модели, проектирование интерфейсов, " +
+                                        "реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)."))));
         return list;
     }
 
@@ -110,11 +112,11 @@ public class ResumeTestData {
                 "\nСанкт-Петербургский национальный исследовательский университет информационных технологий, " +
                         "механики и оптики",
                 "\nhttp://www.ifmo.ru/",
-                Arrays.asList(new PlaceDescription(LocalDate.of(1993, 9, 1),
+                new Place.PlaceDescription(LocalDate.of(1993, 9, 1),
                         LocalDate.of(1996, 7, 1), "\nАспирантура (программист С, С++)",
-                        ""), new PlaceDescription(LocalDate.of(1987, 9, 1),
-                        LocalDate.of(1993, 7, 1), "\nИнженер (программист Fortran, C)",
-                        ""))));
+                        ""), new Place.PlaceDescription(LocalDate.of(1987, 9, 1),
+                LocalDate.of(1993, 7, 1), "\nИнженер (программист Fortran, C)",
+                "")));
         return list;
     }
 
@@ -129,14 +131,16 @@ public class ResumeTestData {
     private static List<String> experienceTitle = Arrays.asList("number1", "number2", "number3", "number4");
     private static List<String> educationName = Arrays.asList("school1", "school2", "school3", "school4");
     private static List<String> educationTitle = Arrays.asList("student1", "student2", "student3", "student4");
-    private static List<LocalDate> startDate = Arrays.asList(DateUtil.of(1990, Month.FEBRUARY),
-            DateUtil.of(1991, Month.FEBRUARY),
-            DateUtil.of(1992, Month.FEBRUARY),
-            DateUtil.of(1993, Month.FEBRUARY));
-    private static List<LocalDate> endDate = Arrays.asList(DateUtil.of(1991, Month.FEBRUARY),
-            DateUtil.of(1992, Month.FEBRUARY),
-            DateUtil.of(1993, Month.FEBRUARY),
-            DateUtil.of(1994, Month.FEBRUARY));
+    private static List<LocalDate> startDate = Arrays.asList(
+            of(1990, Month.FEBRUARY),
+            of(1991, Month.FEBRUARY),
+            of(1992, Month.FEBRUARY),
+            of(1993, Month.FEBRUARY));
+    private static List<LocalDate> endDate = Arrays.asList(
+            of(1991, Month.FEBRUARY),
+            of(1992, Month.FEBRUARY),
+            of(1993, Month.FEBRUARY),
+            of(1994, Month.FEBRUARY));
     private static int count = 0;
 
     public static Resume createResume(String uuid, String fullName) {
@@ -151,9 +155,9 @@ public class ResumeTestData {
                 new ListSections(Arrays.asList(qualification.get(count))));
         resume.setSectionInfo(SectionType.EXPERIENCE,
                 new PlaceSections(Arrays.asList(
-                        new Place(experienceName.get(count), null,
+                        new Place(new PlaceLink(experienceName.get(count), null),
                                 Arrays.asList(
-                                        new PlaceDescription(
+                                        new Place.PlaceDescription(
                                                 startDate.get(count),
                                                 endDate.get(count),
                                                 experienceTitle.get(count),
@@ -161,12 +165,11 @@ public class ResumeTestData {
         resume.setSectionInfo(SectionType.EDUCATION,
                 new PlaceSections(Arrays.asList(
                         new Place(educationName.get(count), null,
-                                Arrays.asList(
-                                        new PlaceDescription(
-                                                startDate.get(count),
-                                                endDate.get(count),
-                                                educationTitle.get(count),
-                                                null))))));
+                                new Place.PlaceDescription(
+                                        startDate.get(count).getYear(),
+                                        startDate.get(count).getMonth(),
+                                        educationTitle.get(count),
+                                        null)))));
         count++;
         if (count > 4) {
             count = 0;

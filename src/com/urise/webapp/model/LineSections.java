@@ -3,11 +3,12 @@ package com.urise.webapp.model;
 import java.util.Objects;
 
 public class LineSections extends AbstractSections {
+    private static final long serialVersionUID = 1L;
 
     private final String text;
 
     public LineSections(String text) {
-        Objects.requireNonNull(text , "text must not be null");
+        Objects.requireNonNull(text, "text must not be null");
         this.text = text;
     }
 

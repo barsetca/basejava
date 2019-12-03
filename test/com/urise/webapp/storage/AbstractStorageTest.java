@@ -7,17 +7,20 @@ import com.urise.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
+
+    protected static final File STORAGE_DIR = new File("C:\\Users\\HP\\IdeaProjects\\basejava\\lesson\\storage");
     protected Storage storage;
-    private static Resume resume1;
-    private static Resume resume2;
-    private static Resume resume3;
-    private static Resume resume4;
+    private static final Resume resume1;
+    private static final Resume resume2;
+    private static final Resume resume3;
+    private static final Resume resume4;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -37,7 +40,16 @@ public abstract class AbstractStorageTest {
 
     @Before
     public void setUpTest() {
+
         storage.clear();
+        if (storage instanceof FileStorage) {
+            FileStorage fileStorage = (FileStorage) storage;
+            fileStorage.setWay(new ObjectStreamStorage());
+        }
+        if (storage instanceof PathStorage) {
+            PathStorage pathStorage = (PathStorage) storage;
+            pathStorage.setWay(new ObjectStreamStorage());
+        }
         storage.save(resume3);
         storage.save(resume1);
         storage.save(resume2);

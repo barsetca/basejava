@@ -1,11 +1,17 @@
 package com.urise.webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class PlaceSections extends AbstractSections {
+    private static final long serialVersionUID = 1L;
 
     private final List<Place> places;
+
+    public PlaceSections(Place... places) {
+        this(Arrays.asList(places));
+    }
 
     public PlaceSections(List<Place> places) {
         Objects.requireNonNull(places, "places must not be null");

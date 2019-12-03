@@ -27,7 +27,7 @@ public class MapStorageUuid extends AbstractStorage<String> {
     }
 
     @Override
-    protected boolean Exist(String uuid) {
+    protected boolean isExist(String uuid) {
 
         return storage.containsKey(uuid);
     }

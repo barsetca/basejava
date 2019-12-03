@@ -50,26 +50,33 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-// Lesson08 HW08
+// Lesson08 HW08 - 09
         String ourDirectoryPath = "C:\\Users\\HP\\IdeaProjects\\basejava\\src";
         File ourDirectory = new File(ourDirectoryPath);
         System.out.println(ourDirectory.getAbsolutePath());
-        printAllDirectoryFiles(ourDirectory);
+        printAllDirectoryAndFiles(ourDirectory);
+
     }
 
-    public static void printAllDirectoryFiles(File file) {
-        if (file == null) {
-            return;
-        }
-        if (file.isFile()) {
-            System.out.println(file.getName());
-        }
-        if (file.isDirectory()) {
-            File[] list = file.listFiles();
-            if (list == null) throw new AssertionError();
-            for (File fileInner : list) {
-               printAllDirectoryFiles(fileInner);
+    private static String space = "";
+
+    public static void printAllDirectoryAndFiles(File dir) {
+
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println(space + "File: " + file.getName());
+                } else if (file.isDirectory()) {
+                    System.out.println(space + "Directory: " + file.getName());
+                    space = space + "   ";
+                    printAllDirectoryAndFiles(file);
+
+                }
             }
+        }
+        if (space.length() > 2) {
+            space = space.substring(3);
         }
     }
 }
