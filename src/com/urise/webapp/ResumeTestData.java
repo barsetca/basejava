@@ -15,32 +15,32 @@ public class ResumeTestData {
     public static void main(String[] args) {
 
         Resume resume = new Resume("Григорий Кислин");
-        resume.setContactInfo(ContactsType.MOBIL, "+7(921) 855-0482 ");
-        resume.setContactInfo(ContactsType.HOME_PHONE, "");
-        resume.setContactInfo(ContactsType.SKYPE, "grigory.kislin");
-        resume.setContactInfo(ContactsType.E_MAIL, "gkislin@yandex.ru");
-        resume.setContactInfo(ContactsType.PROFILE_LINKEDIN, "https://www.linkedin.com/in/gkislin");
-        resume.setContactInfo(ContactsType.PROFILE_GITHUB, "https://github.com/gkislin");
-        resume.setContactInfo(ContactsType.PROFILE_STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-        resume.setContactInfo(ContactsType.HOME_PAGE, "http://gkislin.ru/");
+        resume.setContact(ContactsType.MOBIL, "+7(921) 855-0482 ");
+        resume.setContact(ContactsType.HOME_PHONE, "");
+        resume.setContact(ContactsType.SKYPE, "grigory.kislin");
+        resume.setContact(ContactsType.E_MAIL, "gkislin@yandex.ru");
+        resume.setContact(ContactsType.PROFILE_LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        resume.setContact(ContactsType.PROFILE_GITHUB, "https://github.com/gkislin");
+        resume.setContact(ContactsType.PROFILE_STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        resume.setContact(ContactsType.HOME_PAGE, "http://gkislin.ru/");
 
-        resume.setSectionInfo(SectionType.OBJECTIVE, new LineSections(
+        resume.setSection(SectionType.OBJECTIVE, new LineSection(
                 "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
-        resume.setSectionInfo(SectionType.PERSONAL, new LineSections(
+        resume.setSection(SectionType.PERSONAL, new LineSection(
                 "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры"));
-        resume.setSectionInfo(SectionType.ACHIEVEMENT, new ListSections(fillListAchievement()));
-        resume.setSectionInfo(SectionType.QUALIFICATION, new ListSections(fillListQualification()));
-        resume.setSectionInfo(SectionType.EXPERIENCE, new PlaceSections(fillListExperience()));
-        resume.setSectionInfo(SectionType.EDUCATION, new PlaceSections(fillListEducation()));
+        resume.setSection(SectionType.ACHIEVEMENT, new ListSection(fillListAchievement()));
+        resume.setSection(SectionType.QUALIFICATION, new ListSection(fillListQualification()));
+        resume.setSection(SectionType.EXPERIENCE, new PlaceSection(fillListExperience()));
+        resume.setSection(SectionType.EDUCATION, new PlaceSection(fillListEducation()));
 
         System.out.println(resume.getFullName());
 
         for (ContactsType type : ContactsType.values()) {
-            System.out.println(type.getTitle() + ": " + resume.getContactInfo(type));
+            System.out.println(type.getTitle() + ": " + resume.getContact(type));
         }
 
         for (SectionType type : SectionType.values()) {
-            System.out.println(type.getTitle() + ": " + resume.getSectionInfo(type));
+            System.out.println(type.getTitle() + ": " + resume.getSection(type));
         }
     }
 
@@ -145,16 +145,16 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-        resume.setContactInfo(ContactsType.MOBIL, mobil.get(count));
-        resume.setContactInfo(ContactsType.E_MAIL, mail.get(count));
-        resume.setSectionInfo(SectionType.OBJECTIVE, new LineSections(objective.get(count)));
-        resume.setSectionInfo(SectionType.PERSONAL, new LineSections(personal.get(count)));
-        resume.setSectionInfo(SectionType.ACHIEVEMENT,
-                new ListSections(Arrays.asList(achievement.get(count))));
-        resume.setSectionInfo(SectionType.QUALIFICATION,
-                new ListSections(Arrays.asList(qualification.get(count))));
-        resume.setSectionInfo(SectionType.EXPERIENCE,
-                new PlaceSections(Arrays.asList(
+        resume.setContact(ContactsType.MOBIL, mobil.get(count));
+        resume.setContact(ContactsType.E_MAIL, mail.get(count));
+        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
+        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
+        resume.setSection(SectionType.ACHIEVEMENT,
+                new ListSection(Arrays.asList(achievement.get(count))));
+        resume.setSection(SectionType.QUALIFICATION,
+                new ListSection(Arrays.asList(qualification.get(count))));
+        resume.setSection(SectionType.EXPERIENCE,
+                new PlaceSection(Arrays.asList(
                         new Place(new PlaceLink(experienceName.get(count), null),
                                 Arrays.asList(
                                         new Place.PlaceDescription(
@@ -162,8 +162,8 @@ public class ResumeTestData {
                                                 endDate.get(count),
                                                 experienceTitle.get(count),
                                                 null))))));
-        resume.setSectionInfo(SectionType.EDUCATION,
-                new PlaceSections(Arrays.asList(
+        resume.setSection(SectionType.EDUCATION,
+                new PlaceSection(Arrays.asList(
                         new Place(educationName.get(count), null,
                                 new Place.PlaceDescription(
                                         startDate.get(count).getYear(),

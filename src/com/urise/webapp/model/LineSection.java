@@ -2,12 +2,12 @@ package com.urise.webapp.model;
 
 import java.util.Objects;
 
-public class LineSections extends AbstractSections {
+public class LineSection extends AbstractSections {
     private static final long serialVersionUID = 1L;
 
     private final String text;
 
-    public LineSections(String text) {
+    public LineSection(String text) {
         Objects.requireNonNull(text, "text must not be null");
         this.text = text;
     }
@@ -20,7 +20,7 @@ public class LineSections extends AbstractSections {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LineSections that = (LineSections) o;
+        LineSection that = (LineSection) o;
         return text.equals(that.text);
     }
 

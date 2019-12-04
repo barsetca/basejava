@@ -1,20 +1,14 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.strategy;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage implements ReadWriteStorage {
-
-//    private File directory;
-//
-//    public ObjectStreamStorage(File directory) {
-//        this.directory = directory;
-//    }
+public class ReadWriteObject implements ReadWriteStrategy {
 
     @Override
-    public Resume readFileResume(InputStream in) throws IOException {
+    public Resume readResume(InputStream in) throws IOException {
         try (ObjectInputStream objectIn = new ObjectInputStream(in)) {
             return (Resume) objectIn.readObject();
         } catch (ClassNotFoundException e) {
@@ -23,7 +17,7 @@ public class ObjectStreamStorage implements ReadWriteStorage {
     }
 
     @Override
-    public void writeFileResume(Resume resume, OutputStream out) throws IOException {
+    public void writeResume(Resume resume, OutputStream out) throws IOException {
         try (ObjectOutputStream objectOut = new ObjectOutputStream(out)) {
             objectOut.writeObject(resume);
         }

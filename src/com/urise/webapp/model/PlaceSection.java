@@ -4,16 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class PlaceSections extends AbstractSections {
+public class PlaceSection extends AbstractSections {
     private static final long serialVersionUID = 1L;
 
     private final List<Place> places;
 
-    public PlaceSections(Place... places) {
+    public PlaceSection(Place... places) {
         this(Arrays.asList(places));
     }
 
-    public PlaceSections(List<Place> places) {
+    public PlaceSection(List<Place> places) {
         Objects.requireNonNull(places, "places must not be null");
         this.places = places;
     }
@@ -26,7 +26,7 @@ public class PlaceSections extends AbstractSections {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlaceSections that = (PlaceSections) o;
+        PlaceSection that = (PlaceSection) o;
         return places.equals(that.places);
     }
 

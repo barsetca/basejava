@@ -2,20 +2,23 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.strategy.ReadWriteStrategy;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PathStorage extends AbstractStorage<Path> {
 
     private Path pathDirectory;
 
-    private ReadWriteStorage way;
+    private ReadWriteStrategy strategy;
 
     public PathStorage(String directory) {
         Path path = Paths.get(directory);
@@ -27,27 +30,19 @@ public class PathStorage extends AbstractStorage<Path> {
         this.pathDirectory = path;
     }
 
-    public void setWay(ReadWriteStorage way) {
-        this.way = way;
-    }
-
-    private Resume readPathResume(InputStream in) throws IOException {
-        return way.readFileResume(in);
-    }
-
-    private void writePathResume(Resume resume, OutputStream out) throws IOException {
-        way.writeFileResume(resume, out);
+    public void setStrategy(ReadWriteStrategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
     protected boolean isExist(Path path) {
-        return Files.exists(path);
+        return Files.isRegularFile(path);
     }
 
     @Override
     protected void updateResume(Path path, Resume resume) {
         try {
-            writePathResume(resume, new BufferedOutputStream(Files.newOutputStream(path)));
+            strategy.writeResume(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path write error " + path.toString(), resume.getUuid(), e);
         }
@@ -56,9 +51,9 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume getResume(Path path) {
         try {
-            return readPathResume(new BufferedInputStream(Files.newInputStream(path)));
+            return strategy.readResume(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Path read error" + path.toString(), null, e);
+            throw new StorageException("Path readResume error" + path.toString(), null, e);
         }
     }
 
@@ -74,8 +69,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected Path getSearchKey(String uuid) {
-        Path pathResume = Paths.get(uuid);
-        return pathDirectory.resolve(pathResume);
+        return pathDirectory.resolve(uuid);
     }
 
     @Override
@@ -89,14 +83,12 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> getCopyList() {
-        List<Resume> list = new ArrayList<>();
-
+        List<Resume> list = null;
         try {
-            Files.list(pathDirectory).forEach(path -> list.add(getResume(path)));
+            list = Files.list(pathDirectory).map(this::getResume).collect(Collectors.toList());
         } catch (IOException e) {
-            throw new StorageException("pathDirectory read error: " + pathDirectory.toString(), null);
+            readErrorException(e);
         }
-
         return list;
     }
 
@@ -105,18 +97,22 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.list(pathDirectory).forEach(this::deleteResume);
         } catch (IOException e) {
-            throw new StorageException("pathDirectory clear error: " + pathDirectory.toString(), null);
+            readErrorException(e);
         }
     }
 
     @Override
     public int size() {
-        int length;
+        long size = 0;
         try {
-            length = Files.list(pathDirectory).toArray().length;
+            size = Files.list(pathDirectory).count();
         } catch (IOException e) {
-            throw new StorageException("pathDirectory read error: " + pathDirectory.toString(), null);
+            readErrorException(e);
         }
-        return length;
+        return (int) size;
+    }
+
+    private void readErrorException(IOException e) {
+        throw new StorageException("pathDirectory read error: " + pathDirectory.toString(), null, e);
     }
 }

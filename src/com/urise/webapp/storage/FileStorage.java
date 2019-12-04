@@ -2,6 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.strategy.ReadWriteStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     private File directory;
 
-    private ReadWriteStorage way;
+    private ReadWriteStrategy strategy;
 
     public FileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
@@ -25,16 +26,8 @@ public class FileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
-    public void setWay(ReadWriteStorage way) {
-        this.way = way;
-    }
-
-    protected Resume readFileResume(InputStream in) throws IOException {
-        return way.readFileResume(in);
-    }
-
-    protected void writeFileResume(Resume resume, OutputStream out) throws IOException {
-        way.writeFileResume(resume, out);
+    public void setStrategy(ReadWriteStrategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
@@ -45,7 +38,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void updateResume(File file, Resume resume) {
         try {
-            writeFileResume(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            strategy.writeResume(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error " + file.getAbsolutePath(), resume.getUuid(), e);
         }
@@ -54,7 +47,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume getResume(File file) {
         try {
-            return readFileResume(new BufferedInputStream(new FileInputStream(file)));
+            return strategy.readResume(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error" + file.getAbsolutePath(), null, e);
         }
@@ -113,5 +106,4 @@ public class FileStorage extends AbstractStorage<File> {
         }
         return list.length;
     }
-
 }

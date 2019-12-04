@@ -4,6 +4,7 @@ import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.strategy.ReadWriteObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
 
-    protected static final File STORAGE_DIR = new File("C:\\Users\\HP\\IdeaProjects\\basejava\\lesson\\storage");
+    protected static final File STORAGE_DIR =
+            new File("C:\\Users\\HP\\IdeaProjects\\basejava\\lesson\\storage");
     protected Storage storage;
     private static final Resume resume1;
     private static final Resume resume2;
@@ -44,11 +46,11 @@ public abstract class AbstractStorageTest {
         storage.clear();
         if (storage instanceof FileStorage) {
             FileStorage fileStorage = (FileStorage) storage;
-            fileStorage.setWay(new ObjectStreamStorage());
+            fileStorage.setStrategy(new ReadWriteObject());
         }
         if (storage instanceof PathStorage) {
             PathStorage pathStorage = (PathStorage) storage;
-            pathStorage.setWay(new ObjectStreamStorage());
+            pathStorage.setStrategy(new ReadWriteObject());
         }
         storage.save(resume3);
         storage.save(resume1);
