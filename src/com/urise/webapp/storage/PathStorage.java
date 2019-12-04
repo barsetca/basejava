@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
 
@@ -83,36 +84,26 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> getCopyList() {
-        List<Resume> list = null;
-        try {
-            list = Files.list(pathDirectory).map(this::getResume).collect(Collectors.toList());
-        } catch (IOException e) {
-            readErrorException(e);
-        }
-        return list;
+        return getStream(pathDirectory).map(this::getResume).collect(Collectors.toList());
     }
 
     @Override
     public void clear() {
-        try {
-            Files.list(pathDirectory).forEach(this::deleteResume);
-        } catch (IOException e) {
-            readErrorException(e);
-        }
+        getStream(pathDirectory).forEach(this::deleteResume);
     }
 
     @Override
     public int size() {
-        long size = 0;
-        try {
-            size = Files.list(pathDirectory).count();
-        } catch (IOException e) {
-            readErrorException(e);
-        }
-        return (int) size;
+        return (int) getStream(pathDirectory).count();
     }
 
-    private void readErrorException(IOException e) {
-        throw new StorageException("pathDirectory read error: " + pathDirectory.toString(), null, e);
+    private Stream<Path> getStream(Path pathDirectory) {
+        Stream<Path> stream;
+        try {
+            stream = Files.list(pathDirectory);
+        } catch (IOException e) {
+            throw new StorageException("pathDirectory read error: " + pathDirectory.toString(), null, e);
+        }
+       return stream;
     }
 }
