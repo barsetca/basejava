@@ -2,7 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.strategy.ReadWriteStrategy;
+import com.urise.webapp.storage.strategy.SerializerStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,10 +13,11 @@ public class FileStorage extends AbstractStorage<File> {
 
     private File directory;
 
-    private ReadWriteStrategy strategy;
+    private SerializerStrategy strategy;
 
-    public FileStorage(File directory) {
+    public FileStorage(File directory, SerializerStrategy strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
+
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
         }
@@ -24,9 +25,6 @@ public class FileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not readable/writable");
         }
         this.directory = directory;
-    }
-
-    public void setStrategy(ReadWriteStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -71,7 +69,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void deleteResume(File file) {
         if (!file.delete()) {
-            throw new StorageException("File delete error" + file.getAbsolutePath(), null);
+            throw new StorageException("File delete error" + file.getAbsolutePath());
         }
     }
 
@@ -79,7 +77,7 @@ public class FileStorage extends AbstractStorage<File> {
     protected List<Resume> getCopyList() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error " + directory.getAbsolutePath());
         }
         List<Resume> list = new ArrayList<>();
         for (File file : files) {
@@ -102,7 +100,7 @@ public class FileStorage extends AbstractStorage<File> {
     public int size() {
         String[] list = directory.list();
         if (list == null) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error " + directory.getAbsolutePath());
         }
         return list.length;
     }

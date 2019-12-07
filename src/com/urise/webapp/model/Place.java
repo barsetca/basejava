@@ -1,5 +1,10 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.XmlLocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -10,11 +15,15 @@ import java.util.Objects;
 import static com.urise.webapp.util.DateUtil.NOW;
 import static com.urise.webapp.util.DateUtil.of;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Place implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final PlaceLink link;
-    private final List<PlaceDescription> descriptions;
+    private PlaceLink link;
+    private List<PlaceDescription> descriptions;
+
+    public Place() {
+    }
 
     public Place(String name, String url, PlaceDescription... descriptions) {
         this(new PlaceLink(name, url), Arrays.asList(descriptions));
@@ -23,6 +32,14 @@ public class Place implements Serializable {
     public Place(PlaceLink link, List<PlaceDescription> descriptions) {
         this.link = link;
         this.descriptions = descriptions;
+    }
+
+    public PlaceLink getLink() {
+        return link;
+    }
+
+    public List<PlaceDescription> getListDescriptions() {
+        return descriptions;
     }
 
     @Override
@@ -44,13 +61,18 @@ public class Place implements Serializable {
         return "Place(" + link + "\n" + descriptions + ')';
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class PlaceDescription implements Serializable {
         private static final long serialVersionUID = 1L;
+        @XmlJavaTypeAdapter(XmlLocalDateAdapter.class)
+        private LocalDate startDate;
+        @XmlJavaTypeAdapter(XmlLocalDateAdapter.class)
+        private LocalDate endDate;
+        private String title;
+        private String description;
 
-        private final LocalDate startDate;
-        private final LocalDate endDate;
-        private final String title;
-        private final String description;
+        public PlaceDescription() {
+        }
 
         public PlaceDescription(int startYear, Month startMonth, String title, String description) {
             this(of(startYear, startMonth), NOW, title, description);

@@ -7,7 +7,10 @@ import java.util.Objects;
 public class PlaceSection extends AbstractSections {
     private static final long serialVersionUID = 1L;
 
-    private final List<Place> places;
+    private List<Place> places;
+
+    public PlaceSection() {
+    }
 
     public PlaceSection(Place... places) {
         this(Arrays.asList(places));

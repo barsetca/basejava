@@ -1,16 +1,22 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PlaceLink implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String name;
-    private final String url;
+    private String name;
+    private String url;
+
+    public PlaceLink() {
+    }
 
     public PlaceLink(String name, String url) {
-        Objects.requireNonNull(name , "name must not be null");
+        Objects.requireNonNull(name, "name must not be null");
         this.name = name;
         this.url = url;
     }
@@ -39,7 +45,7 @@ public class PlaceLink implements Serializable {
 
     @Override
     public String toString() {
-        return  "name = " + name + '\'' +
+        return "name = " + name + '\'' +
                 ", url = " + url + '\'' +
                 '}';
     }

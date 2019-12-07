@@ -15,14 +15,14 @@ public class ResumeTestData {
     public static void main(String[] args) {
 
         Resume resume = new Resume("Григорий Кислин");
-        resume.setContact(ContactsType.MOBIL, "+7(921) 855-0482 ");
-        resume.setContact(ContactsType.HOME_PHONE, "");
-        resume.setContact(ContactsType.SKYPE, "grigory.kislin");
-        resume.setContact(ContactsType.E_MAIL, "gkislin@yandex.ru");
-        resume.setContact(ContactsType.PROFILE_LINKEDIN, "https://www.linkedin.com/in/gkislin");
-        resume.setContact(ContactsType.PROFILE_GITHUB, "https://github.com/gkislin");
-        resume.setContact(ContactsType.PROFILE_STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-        resume.setContact(ContactsType.HOME_PAGE, "http://gkislin.ru/");
+        resume.setContact(ContactType.MOBIL, "+7(921) 855-0482 ");
+        resume.setContact(ContactType.HOME_PHONE, "");
+        resume.setContact(ContactType.SKYPE, "grigory.kislin");
+        resume.setContact(ContactType.E_MAIL, "gkislin@yandex.ru");
+        resume.setContact(ContactType.PROFILE_LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        resume.setContact(ContactType.PROFILE_GITHUB, "https://github.com/gkislin");
+        resume.setContact(ContactType.PROFILE_STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        resume.setContact(ContactType.HOME_PAGE, "http://gkislin.ru/");
 
         resume.setSection(SectionType.OBJECTIVE, new LineSection(
                 "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
@@ -34,8 +34,9 @@ public class ResumeTestData {
         resume.setSection(SectionType.EDUCATION, new PlaceSection(fillListEducation()));
 
         System.out.println(resume.getFullName());
+        LineSection lineSection = (LineSection) resume.getSection(SectionType.PERSONAL);
 
-        for (ContactsType type : ContactsType.values()) {
+        for (ContactType type : ContactType.values()) {
             System.out.println(type.getTitle() + ": " + resume.getContact(type));
         }
 
@@ -145,8 +146,8 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-        resume.setContact(ContactsType.MOBIL, mobil.get(count));
-        resume.setContact(ContactsType.E_MAIL, mail.get(count));
+        resume.setContact(ContactType.MOBIL, mobil.get(count));
+        resume.setContact(ContactType.E_MAIL, mail.get(count));
         resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
         resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
         resume.setSection(SectionType.ACHIEVEMENT,
@@ -155,7 +156,7 @@ public class ResumeTestData {
                 new ListSection(Arrays.asList(qualification.get(count))));
         resume.setSection(SectionType.EXPERIENCE,
                 new PlaceSection(Arrays.asList(
-                        new Place(new PlaceLink(experienceName.get(count), null),
+                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
                                 Arrays.asList(
                                         new Place.PlaceDescription(
                                                 startDate.get(count),
@@ -169,7 +170,7 @@ public class ResumeTestData {
                                         startDate.get(count).getYear(),
                                         startDate.get(count).getMonth(),
                                         educationTitle.get(count),
-                                        null)))));
+                                        "description" + count)))));
         count++;
         if (count > 4) {
             count = 0;

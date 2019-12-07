@@ -1,5 +1,8 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
@@ -9,14 +12,19 @@ import java.util.UUID;
 /**
  * Initial resume class
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
 
     // Unique identifier
-    private final String uuid;
-    private final String fullName;
+    private String uuid;
+    private String fullName;
     private final Map<SectionType, AbstractSections> sectionsMap = new EnumMap<>(SectionType.class);
-    private final Map<ContactsType, String> contactsMap = new EnumMap<>(ContactsType.class);
+    private final Map<ContactType, String> contactsMap = new EnumMap<>(ContactType.class);
+
+    public Resume() {
+    }
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -41,7 +49,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         return sectionsMap;
     }
 
-    public Map<ContactsType, String> getContactsMap() {
+    public Map<ContactType, String> getContactsMap() {
         return contactsMap;
     }
 
@@ -53,11 +61,11 @@ public class Resume implements Comparable<Resume>, Serializable {
         sectionsMap.put(sectionType, section);
     }
 
-    public String getContact(ContactsType contactType) {
+    public String getContact(ContactType contactType) {
         return contactsMap.get(contactType);
     }
 
-    public void setContact(ContactsType type, String data) {
+    public void setContact(ContactType type, String data) {
         contactsMap.put(type, data);
     }
 

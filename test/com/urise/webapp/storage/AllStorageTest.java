@@ -11,9 +11,10 @@ import org.junit.runners.Suite;
         SortedArrayStorageTest.class,
         MapStorageResumeTest.class,
         FileStorageTest.class,
-        PathStorageTest.class
-
+        ObjectSerializerPathTest.class,
+        XmlSerializerPathTest.class,
+        JsonSerializerPathTest.class,
+        DataSerializerPathTest.class
 })
 public class AllStorageTest {
-
 }

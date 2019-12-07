@@ -65,14 +65,14 @@ public class MainFile {
             for (File file : files) {
 
                 if (file.isFile()) {
-                    System.out.println(space + "   " + "File: " + file.getName());
+                    System.out.println(space + "File: " + file.getName());
                 } else if (file.isDirectory()) {
-                    space = space + "   ";
+                    //space = space + "   ";
                     System.out.println(space + "Directory: " + file.getName());
-                    printAllDirectoryAndFiles(file, space);
-                    if (space.length() > 2) {
-                        space = space.substring(3);
-                    }
+                    printAllDirectoryAndFiles(file, space + "   ");
+//                    if (space.length() > 2) {
+//                        space = space.substring(3);
+//                    }
                 }
             }
         }

@@ -4,7 +4,6 @@ import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.strategy.ReadWriteObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,16 +41,7 @@ public abstract class AbstractStorageTest {
 
     @Before
     public void setUpTest() {
-
         storage.clear();
-        if (storage instanceof FileStorage) {
-            FileStorage fileStorage = (FileStorage) storage;
-            fileStorage.setStrategy(new ReadWriteObject());
-        }
-        if (storage instanceof PathStorage) {
-            PathStorage pathStorage = (PathStorage) storage;
-            pathStorage.setStrategy(new ReadWriteObject());
-        }
         storage.save(resume3);
         storage.save(resume1);
         storage.save(resume2);
