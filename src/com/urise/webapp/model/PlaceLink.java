@@ -18,7 +18,11 @@ public class PlaceLink implements Serializable {
     public PlaceLink(String name, String url) {
         Objects.requireNonNull(name, "name must not be null");
         this.name = name;
-        this.url = url;
+        if (url == null) {
+            this.url = "";
+        } else {
+            this.url = url;
+        }
     }
 
     public String getName() {

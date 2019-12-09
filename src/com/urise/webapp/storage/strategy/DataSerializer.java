@@ -17,25 +17,27 @@ public class DataSerializer implements SerializerStrategy {
             String uuid = dataIn.readUTF();
             String fullName = dataIn.readUTF();
             Resume resume = new Resume(uuid, fullName);
+
             int sizeContactsMap = dataIn.readInt();
             for (int i = 0; i < sizeContactsMap; i++) {
                 resume.setContact(ContactType.valueOf(dataIn.readUTF()), dataIn.readUTF());
             }
             int sizeSectionsMap = dataIn.readInt();
             for (int i = 0; i < sizeSectionsMap; i++) {
-                String sectionType = dataIn.readUTF();
-                switch (sectionType) {
+                String sectionTypeName = dataIn.readUTF();
+                SectionType sectionType = SectionType.valueOf(sectionTypeName);
+                switch (sectionTypeName) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        resume.setSection(SectionType.valueOf(sectionType), new LineSection(dataIn.readUTF()));
+                        resume.setSection(sectionType, new LineSection(dataIn.readUTF()));
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        resume.setSection(SectionType.valueOf(sectionType), new ListSection(readListSection(dataIn)));
+                        resume.setSection(sectionType, new ListSection(readListSection(dataIn)));
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
-                        resume.setSection(SectionType.valueOf(sectionType), new PlaceSection(readPlaceSection(dataIn)));
+                        resume.setSection(sectionType, new PlaceSection(readPlaceSection(dataIn)));
                         break;
                 }
             }
@@ -48,67 +50,72 @@ public class DataSerializer implements SerializerStrategy {
         try (DataOutputStream dataOut = new DataOutputStream(out)) {
             dataOut.writeUTF(resume.getUuid());
             dataOut.writeUTF(resume.getFullName());
+
             Map<ContactType, String> contacts = resume.getContactsMap();
-            dataOut.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> pair : contacts.entrySet()) {
-                dataOut.writeUTF(pair.getKey().name());
-                dataOut.writeUTF(pair.getValue());
-            }
+
+            writeWithException(contacts, dataOut, (key, value) -> {
+                dataOut.writeUTF(key.name());
+                dataOut.writeUTF(value);
+            });
             Map<SectionType, AbstractSections> sections = resume.getSectionsMap();
-            dataOut.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSections> pair : sections.entrySet()) {
-                dataOut.writeUTF(pair.getKey().name());
-                switch (pair.getKey().name()) {
+
+            writeWithException(sections, dataOut, (key, value) -> {
+                dataOut.writeUTF(key.name());
+                String sectionType = key.name();
+                switch (sectionType) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        LineSection lineSection = (LineSection) pair.getValue();
+                        LineSection lineSection = (LineSection) value;
                         dataOut.writeUTF(lineSection.getText());
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        ListSection listSection = (ListSection) pair.getValue();
+                        ListSection listSection = (ListSection) value;
                         writeListSection(listSection.getItems(), dataOut);
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
-                        PlaceSection placeSection = (PlaceSection) pair.getValue();
+                        PlaceSection placeSection = (PlaceSection) value;
                         writePlaceSection(placeSection.getPlaces(), dataOut);
                         break;
                 }
-            }
+            });
         }
     }
 
-    private void writeListSection(List<String> list, DataOutputStream dataOut) throws IOException {
+    public static void writeListSection(List<String> list, DataOutputStream dataOut) throws IOException {
         dataOut.writeInt(list.size());
         for (String s : list) {
             dataOut.writeUTF(s);
         }
     }
 
-    private void writePlaceSection(List<Place> places, DataOutputStream dataOut) throws IOException {
+    public static void writePlaceSection(List<Place> places, DataOutputStream dataOut) throws IOException {
         dataOut.writeInt(places.size());
         for (Place place : places) {
             dataOut.writeUTF(place.getLink().getName());
-            writeCheckNull(place.getLink().getUrl(), dataOut);
+            dataOut.writeUTF(place.getLink().getUrl());
+
             dataOut.writeInt(place.getListDescriptions().size());
             for (Place.PlaceDescription placeDescription : place.getListDescriptions()) {
-                writeStartEndDate(placeDescription.getStartDate(), placeDescription.getEndDate(), dataOut);
+                writeDate(placeDescription.getStartDate(), dataOut);
+                writeDate(placeDescription.getEndDate(), dataOut);
                 dataOut.writeUTF(placeDescription.getTitle());
-                writeCheckNull(placeDescription.getDescription(), dataOut);
+                dataOut.writeUTF(placeDescription.getDescription());
             }
         }
     }
 
-    private void writeStartEndDate(LocalDate startDate, LocalDate endDate, DataOutputStream dataOut) throws IOException {
-        dataOut.writeUTF(DateUtil.localDateToString(startDate));
-        dataOut.writeUTF(DateUtil.localDateToString(endDate));
+    private static void writeDate(LocalDate localDate, DataOutputStream dataOut) throws IOException {
+        dataOut.writeUTF(DateUtil.localDateToString(localDate));
     }
 
-    private void writeCheckNull(String string, DataOutputStream dataOut) throws IOException {
-        if (string == null) {
-            dataOut.writeUTF("");
-        } else dataOut.writeUTF(string);
+    private static <K, V> void writeWithException(Map<K, V> maps, DataOutputStream dataOut, FunctionalForEach<K, V> writerForEach)
+            throws IOException {
+        dataOut.writeInt(maps.size());
+        for (Map.Entry<K, V> pair : maps.entrySet()) {
+            writerForEach.writeForEach(pair.getKey(), pair.getValue());
+        }
 
     }
 
@@ -126,8 +133,9 @@ public class DataSerializer implements SerializerStrategy {
         int size = dataIn.readInt();
         for (int i = 0; i < size; i++) {
             PlaceLink placeLink = new PlaceLink(dataIn.readUTF(), dataIn.readUTF());
-            int sizeDescription = dataIn.readInt();
+
             List<Place.PlaceDescription> placeDescriptions = new ArrayList<>();
+            int sizeDescription = dataIn.readInt();
             for (int j = 0; j < sizeDescription; j++) {
                 Place.PlaceDescription description = new Place.PlaceDescription(
                         readLocalDate(dataIn),
@@ -145,4 +153,10 @@ public class DataSerializer implements SerializerStrategy {
     private LocalDate readLocalDate(DataInputStream dataIn) throws IOException {
         return DateUtil.stringToLocalDate(dataIn.readUTF());
     }
+
+    @FunctionalInterface
+    private interface FunctionalForEach<K, V> {
+        void writeForEach(K key, V value) throws IOException;
+    }
 }
+

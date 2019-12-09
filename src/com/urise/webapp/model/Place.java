@@ -89,7 +89,11 @@ public class Place implements Serializable {
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;
-            this.description = description;
+            if (description == null) {
+                this.description = "";
+            } else {
+                this.description = description;
+            }
         }
 
         public LocalDate getStartDate() {
