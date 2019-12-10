@@ -6,6 +6,7 @@ import com.urise.webapp.util.DateUtil;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,29 +54,31 @@ public class DataSerializer implements SerializerStrategy {
 
             Map<ContactType, String> contacts = resume.getContactsMap();
 
-            writeWithException(contacts, dataOut, (key, value) -> {
-                dataOut.writeUTF(key.name());
-                dataOut.writeUTF(value);
+            writeWithException(contacts.entrySet(), dataOut, element -> {
+                dataOut.writeUTF(element.getKey().name());
+                dataOut.writeUTF(element.getValue());
             });
             Map<SectionType, AbstractSections> sections = resume.getSectionsMap();
 
-            writeWithException(sections, dataOut, (key, value) -> {
-                dataOut.writeUTF(key.name());
-                String sectionType = key.name();
+            writeWithException(sections.entrySet(), dataOut, element -> {
+                String sectionType = element.getKey().name();
+                dataOut.writeUTF(sectionType);
+
+                AbstractSections abstractSections = element.getValue();
                 switch (sectionType) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        LineSection lineSection = (LineSection) value;
+                        LineSection lineSection = (LineSection) abstractSections;
                         dataOut.writeUTF(lineSection.getText());
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        ListSection listSection = (ListSection) value;
-                        writeListSection(listSection.getItems(), dataOut);
+                        ListSection listSection = (ListSection) abstractSections;
+                        writeWithException(listSection.getItems(), dataOut, dataOut::writeUTF);
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
-                        PlaceSection placeSection = (PlaceSection) value;
+                        PlaceSection placeSection = (PlaceSection) abstractSections;
                         writePlaceSection(placeSection.getPlaces(), dataOut);
                         break;
                 }
@@ -83,40 +86,30 @@ public class DataSerializer implements SerializerStrategy {
         }
     }
 
-    public static void writeListSection(List<String> list, DataOutputStream dataOut) throws IOException {
-        dataOut.writeInt(list.size());
-        for (String s : list) {
-            dataOut.writeUTF(s);
-        }
-    }
-
     public static void writePlaceSection(List<Place> places, DataOutputStream dataOut) throws IOException {
-        dataOut.writeInt(places.size());
-        for (Place place : places) {
+        writeWithException(places, dataOut, place -> {
             dataOut.writeUTF(place.getLink().getName());
             dataOut.writeUTF(place.getLink().getUrl());
 
-            dataOut.writeInt(place.getListDescriptions().size());
-            for (Place.PlaceDescription placeDescription : place.getListDescriptions()) {
-                writeDate(placeDescription.getStartDate(), dataOut);
-                writeDate(placeDescription.getEndDate(), dataOut);
-                dataOut.writeUTF(placeDescription.getTitle());
-                dataOut.writeUTF(placeDescription.getDescription());
-            }
-        }
+            writeWithException(place.getListDescriptions(), dataOut, element -> {
+                writeDate(element.getStartDate(), dataOut);
+                writeDate(element.getEndDate(), dataOut);
+                dataOut.writeUTF(element.getTitle());
+                dataOut.writeUTF(element.getDescription());
+            });
+        });
     }
 
     private static void writeDate(LocalDate localDate, DataOutputStream dataOut) throws IOException {
         dataOut.writeUTF(DateUtil.localDateToString(localDate));
     }
 
-    private static <K, V> void writeWithException(Map<K, V> maps, DataOutputStream dataOut, FunctionalForEach<K, V> writerForEach)
+    private static <E> void writeWithException(Collection<E> collection, DataOutputStream dataOut, WriteForEach<E> writerForEach)
             throws IOException {
-        dataOut.writeInt(maps.size());
-        for (Map.Entry<K, V> pair : maps.entrySet()) {
-            writerForEach.writeForEach(pair.getKey(), pair.getValue());
+        dataOut.writeInt(collection.size());
+        for (E element : collection) {
+            writerForEach.writerElement(element);
         }
-
     }
 
     private List<String> readListSection(DataInputStream dataIn) throws IOException {
@@ -155,8 +148,8 @@ public class DataSerializer implements SerializerStrategy {
     }
 
     @FunctionalInterface
-    private interface FunctionalForEach<K, V> {
-        void writeForEach(K key, V value) throws IOException;
+    private interface WriteForEach<E> {
+        void writerElement(E element) throws IOException;
     }
 }
 
