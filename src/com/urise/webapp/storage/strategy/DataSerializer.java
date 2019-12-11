@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.urise.webapp.model.Place.*;
+import static com.urise.webapp.util.DateUtil.*;
+
 public class DataSerializer implements SerializerStrategy {
 
     @Override
@@ -19,13 +22,10 @@ public class DataSerializer implements SerializerStrategy {
             String fullName = dataIn.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            int sizeContactsMap = dataIn.readInt();
-            for (int i = 0; i < sizeContactsMap; i++) {
-                resume.setContact(ContactType.valueOf(dataIn.readUTF()), dataIn.readUTF());
-            }
-            int sizeSectionsMap = dataIn.readInt();
-            for (int i = 0; i < sizeSectionsMap; i++) {
-                String sectionTypeName = dataIn.readUTF();
+            readWithException(dataIn, 2, elements -> resume.setContact(ContactType.valueOf(elements[0]), elements[1]));
+
+            readWithException(dataIn, 1, elements -> {
+                String sectionTypeName = elements[0];
                 SectionType sectionType = SectionType.valueOf(sectionTypeName);
                 switch (sectionTypeName) {
                     case "OBJECTIVE":
@@ -40,8 +40,11 @@ public class DataSerializer implements SerializerStrategy {
                     case "EDUCATION":
                         resume.setSection(sectionType, new PlaceSection(readPlaceSection(dataIn)));
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + sectionTypeName);
                 }
-            }
+            });
+
             return resume;
         }
     }
@@ -81,6 +84,8 @@ public class DataSerializer implements SerializerStrategy {
                         PlaceSection placeSection = (PlaceSection) abstractSections;
                         writePlaceSection(placeSection.getPlaces(), dataOut);
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + sectionType);
                 }
             });
         }
@@ -101,7 +106,7 @@ public class DataSerializer implements SerializerStrategy {
     }
 
     private static void writeDate(LocalDate localDate, DataOutputStream dataOut) throws IOException {
-        dataOut.writeUTF(DateUtil.localDateToString(localDate));
+        dataOut.writeUTF(localDateToString(localDate));
     }
 
     private static <E> void writeWithException(Collection<E> collection, DataOutputStream dataOut, WriteForEach<E> writerForEach)
@@ -114,42 +119,52 @@ public class DataSerializer implements SerializerStrategy {
 
     private List<String> readListSection(DataInputStream dataIn) throws IOException {
         List<String> list = new ArrayList<>();
-        int size = dataIn.readInt();
-        for (int i = 0; i < size; i++) {
-            list.add(dataIn.readUTF());
-        }
+        readWithException(dataIn, 1, elements -> list.add(elements[0]));
         return list;
     }
 
     private List<Place> readPlaceSection(DataInputStream dataIn) throws IOException {
         List<Place> places = new ArrayList<>();
-        int size = dataIn.readInt();
-        for (int i = 0; i < size; i++) {
-            PlaceLink placeLink = new PlaceLink(dataIn.readUTF(), dataIn.readUTF());
+        readWithException(dataIn, 2, elements -> {
+            PlaceLink placeLink = new PlaceLink(elements[0], elements[1]);
+            List<PlaceDescription> placeDescriptions = new ArrayList<>();
+            readWithException(dataIn, 4, elements1 -> {
+                LocalDate startDate = readDate(elements1[0]);
+                LocalDate endDate = readDate(elements1[1]);
+                PlaceDescription description = new PlaceDescription(startDate, endDate, elements1[2], elements1[3]);
 
-            List<Place.PlaceDescription> placeDescriptions = new ArrayList<>();
-            int sizeDescription = dataIn.readInt();
-            for (int j = 0; j < sizeDescription; j++) {
-                Place.PlaceDescription description = new Place.PlaceDescription(
-                        readLocalDate(dataIn),
-                        readLocalDate(dataIn),
-                        dataIn.readUTF(),
-                        dataIn.readUTF());
                 placeDescriptions.add(description);
-            }
+            });
             Place place = new Place(placeLink, placeDescriptions);
             places.add(place);
-        }
+        });
         return places;
     }
 
-    private LocalDate readLocalDate(DataInputStream dataIn) throws IOException {
-        return DateUtil.stringToLocalDate(dataIn.readUTF());
+    private LocalDate readDate(String localDate) {
+        return DateUtil.stringToLocalDate(localDate);
+    }
+
+    private static void readWithException(DataInputStream dataIn, int count, ReadForEach readForEach)
+            throws IOException {
+        int size = dataIn.readInt();
+        for (int i = 0; i < size; i++) {
+            String[] elements = new String[count];
+            for (int j = 0; j < count; j++) {
+                elements[j] = dataIn.readUTF();
+            }
+            readForEach.readerElement(elements);
+        }
     }
 
     @FunctionalInterface
     private interface WriteForEach<E> {
         void writerElement(E element) throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface ReadForEach {
+        void readerElement(String... elements) throws IOException;
     }
 }
 
