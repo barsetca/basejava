@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static com.urise.webapp.model.Place.*;
-import static com.urise.webapp.util.DateUtil.*;
+import static com.urise.webapp.model.Place.PlaceDescription;
+import static com.urise.webapp.util.DateUtil.localDateToString;
 
 public class DataSerializer implements SerializerStrategy {
 
@@ -22,10 +22,10 @@ public class DataSerializer implements SerializerStrategy {
             String fullName = dataIn.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            readWithException(dataIn, 2, elements -> resume.setContact(ContactType.valueOf(elements[0]), elements[1]));
+            readWithException(dataIn, () -> resume.setContact(ContactType.valueOf(dataIn.readUTF()), dataIn.readUTF()));
 
-            readWithException(dataIn, 1, elements -> {
-                String sectionTypeName = elements[0];
+            readWithException(dataIn, () -> {
+                String sectionTypeName = dataIn.readUTF();
                 SectionType sectionType = SectionType.valueOf(sectionTypeName);
                 switch (sectionTypeName) {
                     case "OBJECTIVE":
@@ -44,7 +44,6 @@ public class DataSerializer implements SerializerStrategy {
                         throw new IllegalStateException("Unexpected value: " + sectionTypeName);
                 }
             });
-
             return resume;
         }
     }
@@ -91,7 +90,7 @@ public class DataSerializer implements SerializerStrategy {
         }
     }
 
-    public static void writePlaceSection(List<Place> places, DataOutputStream dataOut) throws IOException {
+    private void writePlaceSection(List<Place> places, DataOutputStream dataOut) throws IOException {
         writeWithException(places, dataOut, place -> {
             dataOut.writeUTF(place.getLink().getName());
             dataOut.writeUTF(place.getLink().getUrl());
@@ -109,7 +108,7 @@ public class DataSerializer implements SerializerStrategy {
         dataOut.writeUTF(localDateToString(localDate));
     }
 
-    private static <E> void writeWithException(Collection<E> collection, DataOutputStream dataOut, WriteForEach<E> writerForEach)
+    private <E> void writeWithException(Collection<E> collection, DataOutputStream dataOut, WriteForEach<E> writerForEach)
             throws IOException {
         dataOut.writeInt(collection.size());
         for (E element : collection) {
@@ -119,20 +118,19 @@ public class DataSerializer implements SerializerStrategy {
 
     private List<String> readListSection(DataInputStream dataIn) throws IOException {
         List<String> list = new ArrayList<>();
-        readWithException(dataIn, 1, elements -> list.add(elements[0]));
+        readWithException(dataIn, () -> list.add(dataIn.readUTF()));
         return list;
     }
 
     private List<Place> readPlaceSection(DataInputStream dataIn) throws IOException {
         List<Place> places = new ArrayList<>();
-        readWithException(dataIn, 2, elements -> {
-            PlaceLink placeLink = new PlaceLink(elements[0], elements[1]);
+        readWithException(dataIn, () -> {
+            PlaceLink placeLink = new PlaceLink(dataIn.readUTF(), dataIn.readUTF());
             List<PlaceDescription> placeDescriptions = new ArrayList<>();
-            readWithException(dataIn, 4, elements1 -> {
-                LocalDate startDate = readDate(elements1[0]);
-                LocalDate endDate = readDate(elements1[1]);
-                PlaceDescription description = new PlaceDescription(startDate, endDate, elements1[2], elements1[3]);
-
+            readWithException(dataIn, () -> {
+                LocalDate startDate = readDate(dataIn.readUTF());
+                LocalDate endDate = readDate(dataIn.readUTF());
+                PlaceDescription description = new PlaceDescription(startDate, endDate, dataIn.readUTF(), dataIn.readUTF());
                 placeDescriptions.add(description);
             });
             Place place = new Place(placeLink, placeDescriptions);
@@ -145,15 +143,10 @@ public class DataSerializer implements SerializerStrategy {
         return DateUtil.stringToLocalDate(localDate);
     }
 
-    private static void readWithException(DataInputStream dataIn, int count, ReadForEach readForEach)
-            throws IOException {
+    private void readWithException(DataInputStream dataIn, ReadForEach current) throws IOException {
         int size = dataIn.readInt();
         for (int i = 0; i < size; i++) {
-            String[] elements = new String[count];
-            for (int j = 0; j < count; j++) {
-                elements[j] = dataIn.readUTF();
-            }
-            readForEach.readerElement(elements);
+            current.readerElement();
         }
     }
 
@@ -164,7 +157,7 @@ public class DataSerializer implements SerializerStrategy {
 
     @FunctionalInterface
     private interface ReadForEach {
-        void readerElement(String... elements) throws IOException;
+        void readerElement() throws IOException;
     }
 }
 
