@@ -12,7 +12,7 @@ public class MainConcurrency {
 
     private static final int THREAD_NUMBER = 10_000;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println(Thread.currentThread().getName());
 
         Thread thread0 = new Thread() {
@@ -56,22 +56,18 @@ public class MainConcurrency {
         });
         System.out.println(counter);
 
-        // Two treads for HW11 DeadLock
-        new Thread(() -> {
-            try {
-                System.out.println(mainConcurrency.callOne());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        // HW11 version02 DeadLock
+        for (int i = 0; i < 2; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    mainConcurrency.callOne();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        new Thread(() -> {
-            try {
-                System.out.println(mainConcurrency.callTwo());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+            });
+            thread.start();
+        }
     }
 
     private synchronized void inc() { // private static synchronized void inc() = synchronized (MainConcurrency.class){}
@@ -82,29 +78,21 @@ public class MainConcurrency {
         //       }
     }
 
-    // HW11 DeadLock
-    private double callOne() throws InterruptedException {
-        //wait(10);
+    // HW11 version02 DeadLock
+    private void callOne() throws InterruptedException {
         synchronized (LOCK1) {
-            System.out.println(Thread.currentThread().getName() + " Before LOCK2 " + Thread.currentThread().getState());
-            double a = 10.;
-            Thread.sleep(5);
+            System.out.println(Thread.currentThread().getName() + "After first LOCK1");
+            Thread.sleep(100);
             synchronized (LOCK2) {
-                System.out.println(Thread.currentThread().getName() + " After LOCK2 " + Thread.currentThread().getState());
-                double b = Math.sin(callTwo());
-                return a * b;
+                System.out.println(Thread.currentThread().getName() + "After first LOCK2");
             }
         }
-    }
-
-    private double callTwo() throws InterruptedException {
         synchronized (LOCK2) {
-            System.out.println(Thread.currentThread().getName() + " Before LOCK1 " + Thread.currentThread().getState());
+            System.out.println(Thread.currentThread().getName() + "After second LOCK2");
+            Thread.sleep(100);
             synchronized (LOCK1) {
-                System.out.println(Thread.currentThread().getName() + " After LOCK1 " + Thread.currentThread().getState());
-                return Math.sqrt(callOne());
+                System.out.println(Thread.currentThread().getName() + "After second LOCK1");
             }
         }
     }
-
 }
