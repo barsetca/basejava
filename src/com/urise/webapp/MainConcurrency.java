@@ -58,13 +58,14 @@ public class MainConcurrency {
 
         // HW11 version02 DeadLock
         for (int i = 0; i < 2; i++) {
+            final int j = i;
             Thread thread = new Thread(() -> {
                 try {
-                    mainConcurrency.callOne();
+                   if (j == 0) mainConcurrency.callOne(LOCK1, LOCK2);
+                   if (j == 1) mainConcurrency.callOne(LOCK2, LOCK1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             });
             thread.start();
         }
@@ -79,19 +80,10 @@ public class MainConcurrency {
     }
 
     // HW11 version02 DeadLock
-    private void callOne() throws InterruptedException {
-        synchronized (LOCK1) {
-            System.out.println(Thread.currentThread().getName() + "After first LOCK1");
+    private void callOne(Object object1, Object object2) throws InterruptedException {
+        synchronized (object1) {
             Thread.sleep(100);
-            synchronized (LOCK2) {
-                System.out.println(Thread.currentThread().getName() + "After first LOCK2");
-            }
-        }
-        synchronized (LOCK2) {
-            System.out.println(Thread.currentThread().getName() + "After second LOCK2");
-            Thread.sleep(100);
-            synchronized (LOCK1) {
-                System.out.println(Thread.currentThread().getName() + "After second LOCK1");
+            synchronized (object2) {
             }
         }
     }

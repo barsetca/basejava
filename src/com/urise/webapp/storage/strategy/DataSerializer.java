@@ -104,7 +104,7 @@ public class DataSerializer implements SerializerStrategy {
         });
     }
 
-    private static void writeDate(LocalDate localDate, DataOutputStream dataOut) throws IOException {
+    private void writeDate(LocalDate localDate, DataOutputStream dataOut) throws IOException {
         dataOut.writeUTF(localDateToString(localDate));
     }
 
