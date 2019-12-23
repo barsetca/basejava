@@ -146,35 +146,35 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-        resume.setContact(ContactType.MOBIL, mobil.get(count));
-        resume.setContact(ContactType.E_MAIL, mail.get(count));
-        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
-        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
-        resume.setSection(SectionType.ACHIEVEMENT,
-                new ListSection(Arrays.asList(achievement.get(count))));
-        resume.setSection(SectionType.QUALIFICATION,
-                new ListSection(Arrays.asList(qualification.get(count))));
-        resume.setSection(SectionType.EXPERIENCE,
-                new PlaceSection(Arrays.asList(
-                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
-                                Arrays.asList(
-                                        new Place.PlaceDescription(
-                                                startDate.get(count),
-                                                endDate.get(count),
-                                                experienceTitle.get(count),
-                                                ""))))));
-        resume.setSection(SectionType.EDUCATION,
-                new PlaceSection(Arrays.asList(
-                        new Place(educationName.get(count), "",
-                                new Place.PlaceDescription(
-                                        startDate.get(count).getYear(),
-                                        startDate.get(count).getMonth(),
-                                        educationTitle.get(count),
-                                        "description" + count)))));
-        count++;
-        if (count > 4) {
-            count = 0;
-        }
+//        resume.setContact(ContactType.MOBIL, mobil.get(count));
+//        resume.setContact(ContactType.E_MAIL, mail.get(count));
+//        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
+//        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
+//        resume.setSection(SectionType.ACHIEVEMENT,
+//                new ListSection(Arrays.asList(achievement.get(count))));
+//        resume.setSection(SectionType.QUALIFICATION,
+//                new ListSection(Arrays.asList(qualification.get(count))));
+//        resume.setSection(SectionType.EXPERIENCE,
+//                new PlaceSection(Arrays.asList(
+//                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
+//                                Arrays.asList(
+//                                        new Place.PlaceDescription(
+//                                                startDate.get(count),
+//                                                endDate.get(count),
+//                                                experienceTitle.get(count),
+//                                                ""))))));
+//        resume.setSection(SectionType.EDUCATION,
+//                new PlaceSection(Arrays.asList(
+//                        new Place(educationName.get(count), "",
+//                                new Place.PlaceDescription(
+//                                        startDate.get(count).getYear(),
+//                                        startDate.get(count).getMonth(),
+//                                        educationTitle.get(count),
+//                                        "description" + count)))));
+//        count++;
+//        if (count > 4) {
+//            count = 0;
+//        }
         return resume;
     }
 }
