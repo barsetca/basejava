@@ -17,9 +17,8 @@ public class MainStreamApi {
 
     private static int minValue(int[] values) {
 
-        return Arrays.stream(values).boxed().filter(x -> (x > 0 && x < 10)).distinct()
-                .sorted()
-                .reduce((acc, x) -> acc * 10 + x).get();
+
+        return Arrays.stream(values).boxed().distinct().sorted().reduce((acc, x) -> acc * 10 + x).orElse(0);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
