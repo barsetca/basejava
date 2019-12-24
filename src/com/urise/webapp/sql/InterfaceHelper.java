@@ -5,5 +5,5 @@ import java.sql.SQLException;
 
 @FunctionalInterface
 public interface InterfaceHelper<R> {
-   R innerExecute(PreparedStatement ps) throws SQLException;
+    R executeInner(PreparedStatement ps) throws SQLException;
 }
