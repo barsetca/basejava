@@ -146,8 +146,8 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-//        resume.setContact(ContactType.MOBIL, mobil.get(count));
-//        resume.setContact(ContactType.E_MAIL, mail.get(count));
+        resume.setContact(ContactType.MOBIL, mobil.get(count));
+        resume.setContact(ContactType.E_MAIL, mail.get(count));
 //        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
 //        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
 //        resume.setSection(SectionType.ACHIEVEMENT,
@@ -171,10 +171,11 @@ public class ResumeTestData {
 //                                        startDate.get(count).getMonth(),
 //                                        educationTitle.get(count),
 //                                        "description" + count)))));
-//        count++;
-//        if (count > 4) {
-//            count = 0;
-//        }
+        count++;
+        if (count > 4) {
+            count = 0;
+        }
+
         return resume;
     }
 }
