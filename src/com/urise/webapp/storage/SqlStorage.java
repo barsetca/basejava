@@ -4,7 +4,6 @@ import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.sql.SqlHelper;
-import com.urise.webapp.sql.SqlTransaction;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,7 +23,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.<Void>executeSqlHelper("DELETE FROM resume", ps -> {
+        sqlHelper.executeSqlHelper("DELETE FROM resume", ps -> {
             ps.execute();
             return null;
         });
@@ -32,29 +31,38 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.<Void>executeSqlHelper("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
-            ps.setString(1, resume.getFullName());
-            ps.setString(2, resume.getUuid());
-            checkExist(ps, resume.getUuid());
+        String uuid = resume.getUuid();
+        String full_name = resume.getFullName();
+        sqlHelper.executeSqlHelper("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
+            writeUuidFullName(full_name, uuid, ps);
+            checkExist(ps, uuid);
+            return null;
+        });
+        sqlHelper.<Void>transactionalExecute(conn -> {
+            try (PreparedStatement ps =
+                         conn.prepareStatement("UPDATE contact SET type = ?, value = ? WHERE resume_uuid = ?")) {
+                for (Map.Entry<ContactType, String> contact : resume.getContactsMap().entrySet()) {
+                    writeMap(contact, uuid, ps);
+                }
+            }
             return null;
         });
     }
 
     @Override
     public void save(Resume resume) {
-        sqlHelper.transactionalExecute((SqlTransaction<Resume>) conn -> {
+        String uuid = resume.getUuid();
+        String full_name = resume.getFullName();
+        sqlHelper.transactionalExecute(conn -> {
             try (PreparedStatement ps =
-                         conn.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)")) {
-                ps.setString(1, resume.getUuid());
-                ps.setString(2, resume.getFullName());
+                         conn.prepareStatement("INSERT INTO resume (full_name, uuid) VALUES (?, ?)")) {
+                writeUuidFullName(full_name, uuid, ps);
                 ps.execute();
             }
             try (PreparedStatement ps =
-                         conn.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)")) {
+                         conn.prepareStatement("INSERT INTO contact (type,value, resume_uuid) VALUES (?, ?, ?)")) {
                 for (Map.Entry<ContactType, String> contact : resume.getContactsMap().entrySet()) {
-                    ps.setString(1, resume.getUuid());
-                    ps.setString(2, contact.getKey().name());
-                    ps.setString(3, contact.getValue());
+                    writeMap(contact, uuid, ps);
                     ps.addBatch();
                 }
                 ps.executeBatch();
@@ -77,11 +85,9 @@ public class SqlStorage implements Storage {
                     if (!rs.next()) {
                         throw new NotExistStorageException(uuid);
                     }
-                    Resume resume = new Resume(uuid, rs.getString("full_name"));
+                    Resume resume = createResume(uuid, rs);
                     do {
-                        String value = rs.getString("value");
-                        ContactType contactType = ContactType.valueOf(rs.getString("type"));
-                        resume.setContact(contactType, value);
+                        writeContact(resume, rs);
                     } while (rs.next());
                     return resume;
                 });
@@ -89,7 +95,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.<Void>executeSqlHelper("DELETE FROM resume WHERE uuid = ?", ps -> {
+        sqlHelper.executeSqlHelper("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             checkExist(ps, uuid);
             return null;
@@ -98,13 +104,33 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.executeSqlHelper("SELECT * FROM resume ORDER BY full_name, uuid", ps -> {
-            List<Resume> resumes = new ArrayList<>();
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                resumes.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
+        return sqlHelper.transactionalExecute(conn -> {
+            try (PreparedStatement ps =
+                         conn.prepareStatement(
+                                 "SELECT * FROM resume r " +
+                                         "LEFT JOIN contact c " +
+                                         "ON r.uuid = c.resume_uuid " +
+                                         "ORDER BY r.full_name, r.uuid")) {
+                List<Resume> resumes = new ArrayList<>();
+                ResultSet rs = ps.executeQuery();
+                String check = null;
+                Resume resume = null;
+                while (rs.next()) {
+                    String uuid = rs.getString("uuid");
+                    if (!uuid.equals(check)) {
+                        if (check != null) {
+                            resumes.add(resume);
+                        }
+                        resume = createResume(uuid, rs);
+                        writeContact(resume, rs);
+                        check = uuid;
+                    } else if (rs.getString("type") != null) {
+                        writeContact(resume, rs);
+                    }
+                }
+                resumes.add(resume);
+                return resumes;
             }
-            return resumes;
         });
     }
 
@@ -120,5 +146,25 @@ public class SqlStorage implements Storage {
         if (ps.executeUpdate() == 0) {
             throw new NotExistStorageException(uuid);
         }
+    }
+
+    private void writeContact(Resume resume, ResultSet rs) throws SQLException {
+        resume.setContact(ContactType.valueOf(rs.getString("type")),
+                rs.getString("value"));
+    }
+
+    private Resume createResume(String uuid, ResultSet rs) throws SQLException {
+        return new Resume(rs.getString("uuid"), rs.getString("full_name"));
+    }
+
+    private void writeMap(Map.Entry<ContactType, String> contact, String uuid, PreparedStatement ps) throws SQLException {
+        ps.setString(1, contact.getKey().name());
+        ps.setString(2, contact.getValue());
+        ps.setString(3, uuid);
+    }
+
+    private void writeUuidFullName(String full_name, String uuid, PreparedStatement ps) throws SQLException {
+        ps.setString(1, full_name);
+        ps.setString(2, uuid);
     }
 }
