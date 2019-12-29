@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class SqlStorage implements Storage {
 
-    public final SqlHelper sqlHelper;
+    private final SqlHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
@@ -21,7 +21,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.executeSqlHelper("DELETE FROM resume", ps -> {
+        sqlHelper.execute("DELETE FROM resume", ps -> {
             ps.execute();
             return null;
         });
@@ -30,11 +30,10 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         String uuid = resume.getUuid();
-        String full_name = resume.getFullName();
         sqlHelper.<Void>transactionalExecute(conn -> {
             try (PreparedStatement ps =
                          conn.prepareStatement("UPDATE resume SET full_name = ? WHERE uuid = ?")) {
-                insertUuidFullName(full_name, uuid, ps);
+                insertUuidFullName(resume.getFullName(), uuid, ps);
                 checkExist(ps, uuid);
             }
 
@@ -50,12 +49,10 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        String full_name = resume.getFullName();
         sqlHelper.transactionalExecute(conn -> {
             try (PreparedStatement ps =
                          conn.prepareStatement("INSERT INTO resume (full_name, uuid) VALUES (?, ?)")) {
-                insertUuidFullName(full_name, uuid, ps);
+                insertUuidFullName(resume.getFullName(), resume.getUuid(), ps);
                 ps.execute();
             }
             insertContacts(resume, conn);
@@ -65,8 +62,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-
-        return sqlHelper.executeSqlHelper("" +
+        return sqlHelper.execute("" +
                         "    SELECT * FROM resume r " +
                         "      LEFT JOIN contact c " +
                         "        ON r.uuid = c.resume_uuid " +
@@ -88,7 +84,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.executeSqlHelper("DELETE FROM resume WHERE uuid = ?", ps -> {
+        sqlHelper.execute("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             checkExist(ps, uuid);
             return null;
@@ -97,7 +93,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.executeSqlHelper("SELECT * FROM resume r " +
+        return sqlHelper.execute("SELECT * FROM resume r " +
                 "LEFT JOIN contact c " +
                 "ON r.uuid = c.resume_uuid " +
                 "ORDER BY r.full_name, r.uuid", ps -> {
@@ -105,14 +101,9 @@ public class SqlStorage implements Storage {
             Map<String, Resume> resumes = new LinkedHashMap<>();
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
-                Resume resume = resumes.get(uuid);
-                if (resume == null) {
-                    resume = new Resume(uuid, rs.getString("full_name"));
-                    SqlStorage.this.setContact(resume, rs);
-                    resumes.put(uuid, resume);
-                } else {
-                    SqlStorage.this.setContact(resume, rs);
-                }
+                String full_name = rs.getString("full_name");
+                resumes.computeIfAbsent(uuid, v -> new Resume(uuid, full_name));
+                setContact(resumes.get(uuid), rs);
             }
             return new ArrayList<>(resumes.values());
         });
@@ -120,7 +111,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public int size() {
-        return sqlHelper.executeSqlHelper("SELECT count(*) FROM resume", ps -> {
+        return sqlHelper.execute("SELECT count(*) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
             return !rs.next() ? 0 : rs.getInt(1);
         });

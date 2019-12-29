@@ -15,7 +15,7 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public <R> R executeSqlHelper(String sql, InterfaceHelper<R> interfaceHelper) {
+    public <R> R execute(String sql, InterfaceHelper<R> interfaceHelper) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             return interfaceHelper.executeInner(ps);
