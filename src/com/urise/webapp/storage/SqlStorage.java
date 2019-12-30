@@ -29,8 +29,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        sqlHelper.<Void>transactionalExecute(conn -> {
+        sqlHelper.transactionalExecute(conn -> {
+            String uuid = resume.getUuid();
             try (PreparedStatement ps =
                          conn.prepareStatement("UPDATE resume SET full_name = ? WHERE uuid = ?")) {
                 insertUuidFullName(resume.getFullName(), uuid, ps);
@@ -102,8 +102,8 @@ public class SqlStorage implements Storage {
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
                 String full_name = rs.getString("full_name");
-                resumes.computeIfAbsent(uuid, v -> new Resume(uuid, full_name));
-                setContact(resumes.get(uuid), rs);
+                Resume resume = resumes.computeIfAbsent(uuid, v -> new Resume(uuid, full_name));
+                setContact(resume, rs);
             }
             return new ArrayList<>(resumes.values());
         });
@@ -132,11 +132,10 @@ public class SqlStorage implements Storage {
     }
 
     private void insertContacts(Resume resume, Connection conn) throws SQLException {
-        try (PreparedStatement ps =
-                     conn.prepareStatement("INSERT INTO contact (type, value, resume_uuid) VALUES (?, ?, ?)")) {
-
-            Map<ContactType, String> contacts = resume.getContactsMap();
-            if (contacts.size() != 0) {
+        Map<ContactType, String> contacts = resume.getContactsMap();
+        if (contacts.size() != 0) {
+            try (PreparedStatement ps =
+                         conn.prepareStatement("INSERT INTO contact (type, value, resume_uuid) VALUES (?, ?, ?)")) {
                 for (Map.Entry<ContactType, String> contact : contacts.entrySet()) {
                     ps.setString(1, contact.getKey().name());
                     ps.setString(2, contact.getValue());
