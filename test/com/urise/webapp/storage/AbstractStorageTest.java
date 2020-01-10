@@ -4,8 +4,7 @@ import com.urise.webapp.Config;
 import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,10 +62,16 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void updateTest() {
+        System.out.println(resume3);
         Resume newResume = new Resume(UUID_3, "New Name");
         newResume.setContact(ContactType.MOBIL, "999");
         newResume.setContact(ContactType.E_MAIL, "999@999");
+        newResume.setSection(SectionType.OBJECTIVE, new LineSection("strelok"));
+        newResume.setSection(SectionType.PERSONAL, new LineSection("metkiy"));
+        newResume.setSection(SectionType.ACHIEVEMENT, new ListSection("10 celey", "5 missiy"));
+        newResume.setSection(SectionType.QUALIFICATION, new ListSection("profi", "super"));
         storage.update(newResume);
+        System.out.println(newResume);
         assertEquals(newResume, storage.get(UUID_3));
     }
 

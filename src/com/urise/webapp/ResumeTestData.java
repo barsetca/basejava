@@ -148,12 +148,12 @@ public class ResumeTestData {
         Resume resume = new Resume(uuid, fullName);
         resume.setContact(ContactType.MOBIL, mobil.get(count));
         resume.setContact(ContactType.E_MAIL, mail.get(count));
-//        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
-//        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
-//        resume.setSection(SectionType.ACHIEVEMENT,
-//                new ListSection(Arrays.asList(achievement.get(count))));
-//        resume.setSection(SectionType.QUALIFICATION,
-//                new ListSection(Arrays.asList(qualification.get(count))));
+        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
+        resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
+        resume.setSection(SectionType.ACHIEVEMENT,
+                new ListSection(Arrays.asList(achievement.get(count), qualification.get(count))));
+        resume.setSection(SectionType.QUALIFICATION,
+                new ListSection(Arrays.asList(qualification.get(count), qualification.get(count))));
 //        resume.setSection(SectionType.EXPERIENCE,
 //                new PlaceSection(Arrays.asList(
 //                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
