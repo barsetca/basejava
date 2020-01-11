@@ -200,11 +200,7 @@ public class SqlStorage implements Storage {
                         case "ACHIEVEMENT":
                         case "QUALIFICATION":
                             ListSection listSection = (ListSection) section.getValue();
-                            StringBuilder stringBuilder = new StringBuilder();
-                            for (String string : listSection.getItems()) {
-                                stringBuilder.append(string).append("\n");
-                            }
-                            ps.setString(2, stringBuilder.toString());
+                            ps.setString(2, String.join("\n", listSection.getItems()));
                             break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + sectionType);
