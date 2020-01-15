@@ -1,9 +1,10 @@
 package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
+import com.urise.webapp.model.ContactType;
+import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.Storage;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +13,10 @@ import java.io.IOException;
 
 public class ResumeServlet extends HttpServlet {
 
-    // private Storage storage = Config.get().getStorage();
-    private Storage storage;
+    private Storage storage = Config.get().getStorage();
 
+
+/* If need a new logic during loading Servlet use init()
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -23,48 +25,52 @@ public class ResumeServlet extends HttpServlet {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-       //storage =  new SqlStorage("jdbc:postgresql://localhost:5432/resumes", "postgres","password");
-      storage = Config.get().getStorage();
+            storage = Config.get().getStorage();
     }
+    */
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        String uuid = request.getParameter("uuid");
+        String fullName = request.getParameter("fullName");
+        Resume resume = storage.get(uuid);
+        resume.setFullName(fullName);
+        for (ContactType contactType : ContactType.values()) {
+            String value = request.getParameter(contactType.name());
+            if (value != null && value.trim().length() != 0) {
+                resume.setContact(contactType, value);
+            } else {
+                resume.getContactsMap().remove(contactType);
+            }
+        }
+        storage.update(resume);
+        response.sendRedirect("resume");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-        // Аналог - response.setHeader("Content-Type", "text/html; charset=UTF-8");
         String uuid = request.getParameter("uuid");
-        response.getWriter().write(
-                "<html>" +
-                        "<body>" +
-                        "<h3 align='center'>Список резюме</h3>" +
-                        "<table border='1' cellpadding='10' align='center' " +
-                        "<tr>" +
-                        "<th bgcolor='#add8e6'>Number</th>" +
-                        "<th bgcolor='#add8e6'>UUID</th>" +
-                        "<th bgcolor='#add8e6'>FullName</th>" +
-                        "</tr>");
-        if (uuid == null) {
-            for (int i = 0; i < storage.getAllSorted().size(); i++) {
-                response.getWriter().write(
-                        "<tr>" +
-                                "<td align='center'>" + (i + 1) + "</td>" +
-                                "<td align='center'>" + storage.getAllSorted().get(i).getUuid() + "</td>" +
-                                "<td align='center'>" + storage.getAllSorted().get(i).getFullName() + "</td>" +
-                                "</tr>"
-                );
-            }
-        } else response.getWriter().write(
-                "<tr>" +
-                        "<td align='center'>" + 1 + "</td>" +
-                        "<td align='center'>" + uuid + "</td>" +
-                        "<td align='center'>" + storage.get(uuid).getFullName() + "</td>" +
-                        "</tr>");
-        response.getWriter().write(
-                "</table>" +
-                        "</body>" +
-                        "</html>");
+        String action = request.getParameter("action");
+        if (action == null) {
+            request.setAttribute("resumes", storage.getAllSorted());
+            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+            return;
+        }
+        Resume resume;
+        switch (action) {
+            case "delete":
+                storage.delete(uuid);
+                response.sendRedirect("resume");
+                return;
+            case "view":
+            case "edit":
+                resume = storage.get(uuid);
+                break;
+            default:
+                throw new IllegalArgumentException("Action " + action + " is illegal");
+        }
+        request.setAttribute("resume", resume);
+        request.getRequestDispatcher(
+                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
+        ).forward(request, response);
     }
 }

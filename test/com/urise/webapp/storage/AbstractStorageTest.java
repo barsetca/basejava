@@ -1,18 +1,19 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.Config;
-import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
+import com.urise.webapp.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
+import static com.urise.webapp.TestData.*;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
@@ -20,22 +21,6 @@ public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
     //     new File("C:/Users/HP/IdeaProjects/basejava/lesson/storage");
     protected Storage storage;
-    private static final Resume resume1;
-    private static final Resume resume2;
-    private static final Resume resume3;
-    private static final Resume resume4;
-
-    private static final String UUID_1 = UUID.randomUUID().toString();
-    private static final String UUID_2 = UUID.randomUUID().toString();
-    private static final String UUID_3 = UUID.randomUUID().toString();
-    private static final String UUID_4 = UUID.randomUUID().toString();
-
-    static {
-        resume1 = ResumeTestData.createResume(UUID_1, "a");
-        resume2 = ResumeTestData.createResume(UUID_2, "b");
-        resume3 = ResumeTestData.createResume(UUID_3, "c");
-        resume4 = ResumeTestData.createResume(UUID_4, "d");
-    }
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -70,6 +55,23 @@ public abstract class AbstractStorageTest {
         newResume.setSection(SectionType.PERSONAL, new LineSection("metkiy"));
         newResume.setSection(SectionType.ACHIEVEMENT, new ListSection("10 celey", "5 missiy"));
         newResume.setSection(SectionType.QUALIFICATION, new ListSection("profi", "super"));
+        newResume.setSection(SectionType.EXPERIENCE,
+                new PlaceSection(Arrays.asList(
+                        new Place(new PlaceLink("name", "url"),
+                                Arrays.asList(
+                                        new Place.PlaceDescription(
+                                                DateUtil.of(1990, Month.DECEMBER),
+                                                DateUtil.of(1995, Month.DECEMBER),
+                                                "experienceTitle",
+                                                ""))))));
+        newResume.setSection(SectionType.EDUCATION,
+                new PlaceSection(Arrays.asList(
+                        new Place("educationName.get(count)", "",
+                                new Place.PlaceDescription(
+                                        DateUtil.of(1990, Month.DECEMBER),
+                                        DateUtil.of(1995, Month.DECEMBER),
+                                        "educationTitle",
+                                        "descriptionNew")))));
         storage.update(newResume);
         System.out.println(newResume);
         assertEquals(newResume, storage.get(UUID_3));

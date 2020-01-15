@@ -1,8 +1,12 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.*;
+import com.urise.webapp.model.AbstractSections;
+import com.urise.webapp.model.ContactType;
+import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.SectionType;
 import com.urise.webapp.sql.SqlHelper;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,6 +19,12 @@ public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
+        //Class.forName - for connection Servlet to DB
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
     }
 
@@ -148,6 +158,14 @@ public class SqlStorage implements Storage {
     }
 
     private void setSection(Resume resume, ResultSet rs) throws SQLException {
+        String section = rs.getString("section_value");
+        if (section != null) {
+            SectionType type = SectionType.valueOf(rs.getString("section_type"));
+            resume.setSection(type, JsonParser.read(section, AbstractSections.class));
+        }
+
+        /* Рeaлизация если section_value = контентинированная строка через \n
+
         String type = rs.getString("section_type");
         String section = rs.getString("section_value");
         if (type != null) {
@@ -164,7 +182,7 @@ public class SqlStorage implements Storage {
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
-        }
+        }*/
     }
 
     private void insertContacts(Resume resume, Connection conn) throws SQLException {
@@ -191,6 +209,10 @@ public class SqlStorage implements Storage {
                 for (Map.Entry<SectionType, AbstractSections> section : sections.entrySet()) {
                     String sectionType = section.getKey().name();
                     ps.setString(1, sectionType);
+                    String value = JsonParser.write(section.getValue(), AbstractSections.class);
+                    ps.setString(2, value);
+                   /*
+                   Рeaлизация если section_value = контентинированная строка через \n
                     switch (sectionType) {
                         case "OBJECTIVE":
                         case "PERSONAL":
@@ -204,7 +226,7 @@ public class SqlStorage implements Storage {
                             break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + sectionType);
-                    }
+                    }*/
                     ps.setString(3, resume.getUuid());
                     ps.addBatch();
                 }
