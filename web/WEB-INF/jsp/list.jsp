@@ -1,4 +1,5 @@
 <%@ page import="com.urise.webapp.model.ContactType" %>
+<%@ page import="com.urise.webapp.util.HtmlUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -21,7 +22,7 @@
             <jsp:useBean id="resume" type="com.urise.webapp.model.Resume"/>
             <tr>
                 <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
-                <td><%=ContactType.E_MAIL.toHtml(resume.getContact(ContactType.E_MAIL))%>
+                <td><%=HtmlUtil.toHtmlContacts(ContactType.E_MAIL, resume.getContact(ContactType.E_MAIL))%>
                 </td>
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png"
                                                                                            width="25" height="25"></a>
@@ -31,6 +32,8 @@
             </tr>
         </c:forEach>
     </table>
+    <br/>
+    <button><a href="resume?action=add"><img src="img/add-user-icon.png" width="55" height="50"></a></button>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>

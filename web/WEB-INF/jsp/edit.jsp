@@ -1,4 +1,5 @@
 <%@ page import="com.urise.webapp.model.ContactType" %>
+<%@ page import="com.urise.webapp.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -25,14 +26,23 @@
             </dl>
         </c:forEach>
         <h3>Секции:</h3>
-        <input type="text" name="section" size=30 value="1"><br/>
-        <input type="text" name="section" size=30 value="2"><br/>
-        <input type="text" name="section" size=30 value="3"><br/>
+        <c:forEach var="type" items="<%=SectionType.values()%>">
+            <dl>
+                <dt>${type.title}</dt>
+                <dd><input type="text" name="${type.name()}" size=130 value="${resume.getSection(type)}"></dd>
+            </dl>
+        </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
+        <% String action = request.getParameter("action");
+            if (action.equals("edit")) {%>
         <button onclick="window.history.back()">Отменить</button>
+        <% } else {%>
+        <button><a href="resume?uuid=${resume.uuid}&action=delete">Отменить</a></button>
+        <% } %>
     </form>
 </section>
+
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

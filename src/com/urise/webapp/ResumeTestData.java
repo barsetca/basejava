@@ -162,10 +162,10 @@ public class ResumeTestData {
                                                 startDate.get(count),
                                                 endDate.get(count),
                                                 experienceTitle.get(count),
-                                                ""))))));
+                                                "description" + count * 10))))));
         resume.setSection(SectionType.EDUCATION,
                 new PlaceSection(Arrays.asList(
-                        new Place(educationName.get(count), "",
+                        new Place(educationName.get(count), "http//" + count,
                                 new Place.PlaceDescription(
                                         startDate.get(count).getYear(),
                                         startDate.get(count).getMonth(),
