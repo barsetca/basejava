@@ -28,8 +28,9 @@
                          type="java.util.Map.Entry<com.urise.webapp.model.SectionType, com.urise.webapp.model.AbstractSections>"/>
     <h3><%=sectionEntry.getKey().getTitle()%>
     </h3>
-    <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
-    <br/>
+    <ul>
+        <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
+    </ul>
     </c:forEach>
     </p>
 </section>

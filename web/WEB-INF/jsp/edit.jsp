@@ -25,7 +25,16 @@
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <h3>Секции:</h3>
+        <h3>Описание:</h3>
+        <kbd>
+            <i> <font color="blue">Формат ввода нескольких атрибутов одного параметра</font></i> -
+            <font color="red"> через запятую с пробелом</font>.<br/>
+            <i><font color="blue">Например, в разделе "Достижения" можно написать:</font></i>
+        </kbd>
+        <kbd>Покорил Эверест
+            <mark>,</mark>
+            Пересёк Евразию на воздушном шаре</kbd>
+        <br/><br/>
         <c:forEach var="type" items="<%=SectionType.values()%>">
             <dl>
                 <dt>${type.title}</dt>

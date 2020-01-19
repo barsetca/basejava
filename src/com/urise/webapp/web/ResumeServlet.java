@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -33,7 +36,7 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        if (fullName == "") {
+        if (fullName.equals("")) {
             fullName = "<b>Введите имя!!!</b>";
         }
         Resume resume = storage.get(uuid);
@@ -58,7 +61,10 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        ListSection listSection = new ListSection(value);
+                        String[] lines = value.split(",");
+                        List<String> list = new ArrayList<>();
+                        Stream.of(lines).forEach(v -> list.add(v.trim()));
+                        ListSection listSection = new ListSection(list);
                         resume.setSection(sectionType, listSection);
                         break;
                     case "EXPERIENCE":
@@ -96,6 +102,7 @@ public class ResumeServlet extends HttpServlet {
             case "add":
                 resume = new Resume("");
                 storage.save(resume);
+                // ResumeTestData.createEmptyResume(resume);
                 break;
             case "view":
             case "edit":
@@ -111,3 +118,25 @@ public class ResumeServlet extends HttpServlet {
         ).forward(request, response);
     }
 }
+/*
+edit.jsp
+<c:forEach var="type" items="<%=SectionType.values()%>">
+            <c:set var="section" value="${resume.getSection(type)}"/>
+            <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSections"/>
+            <dl>
+                <dt>${type.title}</dt>
+                <c:choose>
+                    <c:when test="${(type.name().equals('OBJECTIVE') || type.name().equals('PERSONAL')) }">
+                        <dd><input type="text" name="${type.name()}" size=130 value="${section}"></dd>
+                    </c:when>
+                    <c:when test="${(type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATION')) }">
+                        <dd><input type="text" name="${type.name()}" size=130 value="
+                        <%=String.join(", " , ((ListSection) section).getItems().)%>"></dd>
+                    </c:when>
+                    <c:otherwise>
+                        <dd><input type="text" name="${type.name()}" size=130 value="${resume.getSection(type)}"></dd>
+                    </c:otherwise>
+                </c:choose>
+            </dl>
+        </c:forEach>
+ */

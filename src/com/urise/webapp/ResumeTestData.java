@@ -151,9 +151,9 @@ public class ResumeTestData {
         resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
         resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
         resume.setSection(SectionType.ACHIEVEMENT,
-                new ListSection(Arrays.asList(achievement.get(count), qualification.get(count))));
+                new ListSection(achievement.get(count), qualification.get(count)));
         resume.setSection(SectionType.QUALIFICATION,
-                new ListSection(Arrays.asList(qualification.get(count), qualification.get(count))));
+                new ListSection(new ArrayList<>(Arrays.asList(qualification.get(count), qualification.get(count)))));
         resume.setSection(SectionType.EXPERIENCE,
                 new PlaceSection(Arrays.asList(
                         new Place(new PlaceLink(experienceName.get(count), "url" + count),
@@ -177,4 +177,35 @@ public class ResumeTestData {
         }
         return resume;
     }
+    /*
+    public static Resume createEmptyResume(Resume resume) {
+
+        resume.setSection(SectionType.OBJECTIVE, new LineSection(""));
+        resume.setSection(SectionType.PERSONAL, new LineSection(""));
+        resume.setSection(SectionType.ACHIEVEMENT, new ListSection(""));
+        resume.setSection(SectionType.QUALIFICATION, new ListSection(""));
+        resume.setSection(SectionType.EXPERIENCE,
+                new PlaceSection(Arrays.asList(
+                        new Place(new PlaceLink("", ""),
+                                Arrays.asList(
+                                        new Place.PlaceDescription(
+                                                startDate.get(1),
+                                                endDate.get(1),
+                                                "",
+                                                ""))))));
+        resume.setSection(SectionType.EDUCATION,
+                new PlaceSection(Arrays.asList(
+                        new Place(new PlaceLink("", ""),
+                                Arrays.asList(
+                                        new Place.PlaceDescription(
+                                                startDate.get(0),
+                                                endDate.get(0),
+                                                "",
+                                                ""))))));
+        count++;
+        if (count > 4) {
+            count = 0;
+        }
+        return resume;
+    }*/
 }

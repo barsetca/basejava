@@ -41,8 +41,8 @@ public class ListSection extends AbstractSections {
 
     @Override
     public String toString() {
-        return "\n" + items +
-                '}';
+        String string = "" + items;
+        return string.replaceAll("}*\\{*]*\\[*", "");
     }
 }
 

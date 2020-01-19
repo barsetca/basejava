@@ -31,29 +31,34 @@ public class HtmlUtil {
         switch (sectionType.name()) {
             case "OBJECTIVE":
             case "PERSONAL":
-                return abstractSections.toString();
+                return "<li>" + abstractSections.toString() + "</li>";
             case "ACHIEVEMENT":
             case "QUALIFICATION":
                 ListSection listSection = (ListSection) abstractSections;
-                return String.join(", ", listSection.getItems())
-                        .replaceAll("}*\\{*]*\\[*", "");
+                StringJoiner joinerList = new StringJoiner("");
+                for (String string : listSection.getItems()) {
+                    joinerList.add("<li>" + string + "</li>");
+                }
+                return joinerList.toString();
+
             case "EXPERIENCE":
             case "EDUCATION":
                 PlaceSection placeSection = (PlaceSection) abstractSections;
-                StringJoiner joiner = new StringJoiner("<br/>");
+                StringJoiner joinerPlace = new StringJoiner("<br/>");
                 List<Place> listPlaces = placeSection.getPlaces();
                 for (Place place : listPlaces) {
-                    joiner.add("<b>" + place.getLink().getName() + "</b> " +
-                            "<a href=" + place.getLink().getUrl() + ">" + place.getLink().getUrl() + "</a>");
+                    joinerPlace.add("<li><b>" + place.getLink().getName() + "</b> " +
+                            "<a href=" + place.getLink().getUrl() + ">" + place.getLink().getUrl() + "</a></li>");
                     List<Place.PlaceDescription> placeDescriptions = place.getListDescriptions();
                     for (Place.PlaceDescription description : placeDescriptions) {
-                        joiner.add(DateUtil.localDateToString(description.getStartDate()) +
-                                " - " + DateUtil.localDateToString(description.getEndDate()) +
-                                "    " + "<b>" + description.getTitle() + "</b>");
-                        joiner.add(description.getDescription());
+                        String endDate = description.getEndDate().equals(DateUtil.NOW) ? "по настоящее время" :
+                                DateUtil.localDateToString(description.getEndDate());
+                        joinerPlace.add(DateUtil.localDateToString(description.getStartDate()) +
+                                " - " + endDate + "    " + "<b>" + description.getTitle() + "</b>");
+                        joinerPlace.add(description.getDescription());
                     }
                 }
-                return joiner.toString();
+                return joinerPlace.toString();
             default:
                 throw new IllegalStateException("Unexpected value: " + sectionType);
         }
