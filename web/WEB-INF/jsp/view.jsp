@@ -19,6 +19,7 @@
         <c:forEach var="contactEntry" items="${resume.contactsMap}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<com.urise.webapp.model.ContactType, java.lang.String>"/>
+
             <%=HtmlUtil.toHtmlContacts(contactEntry.getKey(), contactEntry.getValue())%><br/>
         </c:forEach>
     </p>
@@ -26,11 +27,19 @@
         <c:forEach var="sectionEntry" items="${resume.sectionsMap}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<com.urise.webapp.model.SectionType, com.urise.webapp.model.AbstractSections>"/>
+
+                <% if (sectionEntry.getValue().toString().equals("null") || sectionEntry.getValue().toString().equals("")){ %>
+                <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
+                <% } else { %>
+
     <h3><%=sectionEntry.getKey().getTitle()%>
     </h3>
     <ul>
         <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
     </ul>
+
+    <% } %>
+
     </c:forEach>
     </p>
 </section>

@@ -7,6 +7,8 @@ import java.util.Objects;
 public class ListSection extends AbstractSections {
     private static final long serialVersionUID = 1L;
 
+    public static final ListSection EMPTY = new ListSection("");
+
     private List<String> items;
 
     public ListSection() {

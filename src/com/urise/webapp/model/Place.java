@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.XmlLocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,6 +19,8 @@ import static com.urise.webapp.util.DateUtil.of;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Place implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public static final Place EMPTY = new Place("", "", PlaceDescription.EMPTY);
 
     private PlaceLink link;
     private List<PlaceDescription> descriptions;
@@ -64,6 +67,10 @@ public class Place implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class PlaceDescription implements Serializable {
         private static final long serialVersionUID = 1L;
+
+        public static final PlaceDescription EMPTY = new PlaceDescription(DateUtil.EMPTY, DateUtil.EMPTY, "", "");
+
+
         @XmlJavaTypeAdapter(XmlLocalDateAdapter.class)
         private LocalDate startDate;
         @XmlJavaTypeAdapter(XmlLocalDateAdapter.class)

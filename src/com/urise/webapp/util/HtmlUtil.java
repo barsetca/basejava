@@ -2,6 +2,7 @@ package com.urise.webapp.util;
 
 import com.urise.webapp.model.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -27,13 +28,18 @@ public class HtmlUtil {
     }
 
     public static String toHtmlSection(SectionType sectionType, AbstractSections abstractSections) {
-        if (abstractSections == null) return "";
+        String s = abstractSections.toString();
+
+        if (s.equals("null") || s.equals("")) {
+            return "";
+        }
         switch (sectionType.name()) {
             case "OBJECTIVE":
             case "PERSONAL":
                 return "<li>" + abstractSections.toString() + "</li>";
             case "ACHIEVEMENT":
             case "QUALIFICATION":
+
                 ListSection listSection = (ListSection) abstractSections;
                 StringJoiner joinerList = new StringJoiner("");
                 for (String string : listSection.getItems()) {
@@ -46,16 +52,21 @@ public class HtmlUtil {
                 PlaceSection placeSection = (PlaceSection) abstractSections;
                 StringJoiner joinerPlace = new StringJoiner("<br/>");
                 List<Place> listPlaces = placeSection.getPlaces();
+
                 for (Place place : listPlaces) {
                     joinerPlace.add("<li><b>" + place.getLink().getName() + "</b> " +
                             "<a href=" + place.getLink().getUrl() + ">" + place.getLink().getUrl() + "</a></li>");
                     List<Place.PlaceDescription> placeDescriptions = place.getListDescriptions();
+
                     for (Place.PlaceDescription description : placeDescriptions) {
-                        String endDate = description.getEndDate().equals(DateUtil.NOW) ? "по настоящее время" :
+                        String startDate = description.getStartDate().isAfter(LocalDate.now()) ? "н/д" :
+                                DateUtil.localDateToString(description.getStartDate());
+
+                        String endDate = description.getEndDate().isAfter(LocalDate.now()) ? "по настоящее время" :
                                 DateUtil.localDateToString(description.getEndDate());
-                        joinerPlace.add(DateUtil.localDateToString(description.getStartDate()) +
-                                " - " + endDate + "    " + "<b>" + description.getTitle() + "</b>");
-                        joinerPlace.add(description.getDescription());
+
+                        joinerPlace.add(startDate + " - " + endDate + "    " + "<b>" + description.getTitle() + "</b>");
+                        joinerPlace.add(description.getDescription() + "<br/>");
                     }
                 }
                 return joinerPlace.toString();

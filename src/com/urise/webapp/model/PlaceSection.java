@@ -40,7 +40,6 @@ public class PlaceSection extends AbstractSections {
 
     @Override
     public String toString() {
-        return "\n" + places +
-                '}';
+        return "" + places;
     }
 }

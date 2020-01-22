@@ -177,35 +177,4 @@ public class ResumeTestData {
         }
         return resume;
     }
-    /*
-    public static Resume createEmptyResume(Resume resume) {
-
-        resume.setSection(SectionType.OBJECTIVE, new LineSection(""));
-        resume.setSection(SectionType.PERSONAL, new LineSection(""));
-        resume.setSection(SectionType.ACHIEVEMENT, new ListSection(""));
-        resume.setSection(SectionType.QUALIFICATION, new ListSection(""));
-        resume.setSection(SectionType.EXPERIENCE,
-                new PlaceSection(Arrays.asList(
-                        new Place(new PlaceLink("", ""),
-                                Arrays.asList(
-                                        new Place.PlaceDescription(
-                                                startDate.get(1),
-                                                endDate.get(1),
-                                                "",
-                                                ""))))));
-        resume.setSection(SectionType.EDUCATION,
-                new PlaceSection(Arrays.asList(
-                        new Place(new PlaceLink("", ""),
-                                Arrays.asList(
-                                        new Place.PlaceDescription(
-                                                startDate.get(0),
-                                                endDate.get(0),
-                                                "",
-                                                ""))))));
-        count++;
-        if (count > 4) {
-            count = 0;
-        }
-        return resume;
-    }*/
 }

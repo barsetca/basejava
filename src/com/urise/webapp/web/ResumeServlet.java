@@ -3,15 +3,19 @@ package com.urise.webapp.web;
 import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.DateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static com.urise.webapp.util.ServletUtil.addSectionsDoGet;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -36,11 +40,15 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        if (fullName.equals("")) {
-            fullName = "<b>Введите имя!!!</b>";
+        Resume resume;
+        final boolean isCreate = (uuid == null || uuid.length() == 0);
+        if (isCreate) {
+            resume = new Resume(fullName);
+        } else {
+            resume = storage.get(uuid);
+            resume.setFullName(fullName);
         }
-        Resume resume = storage.get(uuid);
-        resume.setFullName(fullName);
+
         for (ContactType contactType : ContactType.values()) {
             String value = request.getParameter(contactType.name());
             if (value != null && value.trim().length() != 0) {
@@ -52,6 +60,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType sectionType : SectionType.values()) {
             String stringType = sectionType.name();
             String value = request.getParameter(stringType);
+            String[] values = request.getParameterValues(stringType);
             if (value != null && value.trim().length() != 0) {
                 switch (stringType) {
                     case "OBJECTIVE":
@@ -61,7 +70,7 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        String[] lines = value.split(",");
+                        String[] lines = value.split("\n");
                         List<String> list = new ArrayList<>();
                         Stream.of(lines).forEach(v -> list.add(v.trim()));
                         ListSection listSection = new ListSection(list);
@@ -69,7 +78,26 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
+
+                        List<Place> placeList = new ArrayList<>();
+                        for (int i = 0; i < values.length; i = i + 6) {
+                            String placeName = values[i];
+                            if (placeName == null || placeName.equals("")) {
+                                continue;
+                            }
+                            String urlPlace = values[i + 1];
+                            LocalDate startDate = DateUtil.stringToLocalDate(values[i + 3]);
+                            LocalDate endDate = DateUtil.stringToLocalDate(values[i + 4]);
+                            String position = values[i + 2];
+                            String descriptionPosition = values[i + 5];
+                            Place place = new Place(placeName, urlPlace,
+                                    new Place.PlaceDescription(startDate, endDate, position, descriptionPosition));
+                            placeList.add(place);
+                        }
+                        PlaceSection placeSection = new PlaceSection(placeList);
+                        resume.setSection(sectionType, placeSection);
                         break;
+
                     default:
                         throw new IllegalStateException("Unexpected value: " + sectionType);
                 }
@@ -101,11 +129,21 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "add":
                 resume = new Resume("");
+                resume.setSection(SectionType.OBJECTIVE, LineSection.EMPTY);
+                resume.setSection(SectionType.PERSONAL, LineSection.EMPTY);
+                resume.setSection(SectionType.ACHIEVEMENT, ListSection.EMPTY);
+                resume.setSection(SectionType.QUALIFICATION, ListSection.EMPTY);
+                resume.setSection(SectionType.EXPERIENCE, new PlaceSection(Place.EMPTY));
+                resume.setSection(SectionType.EDUCATION, new PlaceSection(Place.EMPTY));
                 storage.save(resume);
-                // ResumeTestData.createEmptyResume(resume);
+                break;
+            case "addEducation":
+            case "addExperience":
+            case "edit":
+                resume = storage.get(uuid);
+                addSectionsDoGet(resume, action);
                 break;
             case "view":
-            case "edit":
                 resume = storage.get(uuid);
                 break;
             default:
@@ -117,26 +155,5 @@ public class ResumeServlet extends HttpServlet {
                         "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
     }
+
 }
-/*
-edit.jsp
-<c:forEach var="type" items="<%=SectionType.values()%>">
-            <c:set var="section" value="${resume.getSection(type)}"/>
-            <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSections"/>
-            <dl>
-                <dt>${type.title}</dt>
-                <c:choose>
-                    <c:when test="${(type.name().equals('OBJECTIVE') || type.name().equals('PERSONAL')) }">
-                        <dd><input type="text" name="${type.name()}" size=130 value="${section}"></dd>
-                    </c:when>
-                    <c:when test="${(type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATION')) }">
-                        <dd><input type="text" name="${type.name()}" size=130 value="
-                        <%=String.join(", " , ((ListSection) section).getItems().)%>"></dd>
-                    </c:when>
-                    <c:otherwise>
-                        <dd><input type="text" name="${type.name()}" size=130 value="${resume.getSection(type)}"></dd>
-                    </c:otherwise>
-                </c:choose>
-            </dl>
-        </c:forEach>
- */

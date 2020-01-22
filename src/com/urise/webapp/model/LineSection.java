@@ -5,6 +5,8 @@ import java.util.Objects;
 public class LineSection extends AbstractSections {
     private static final long serialVersionUID = 1L;
 
+    public static final LineSection EMPTY = new LineSection("");
+
     private String text;
 
     public LineSection() {
