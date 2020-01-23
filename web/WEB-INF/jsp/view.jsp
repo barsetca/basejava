@@ -28,18 +28,15 @@
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<com.urise.webapp.model.SectionType, com.urise.webapp.model.AbstractSections>"/>
 
-                <% if (sectionEntry.getValue().toString().equals("null") || sectionEntry.getValue().toString().equals("")){ %>
+        <c:if test="${((sectionEntry.value.toString().equals('null')) || (sectionEntry.value.toString().equals('')))}">
                 <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
-                <% } else { %>
-
+        </c:if>
+        <c:if test="${(!(sectionEntry.value.toString().equals('null')) || !(sectionEntry.value.toString().equals('')))}">
     <h3><%=sectionEntry.getKey().getTitle()%>
     </h3>
-    <ul>
-        <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
+    <ul><%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
     </ul>
-
-    <% } %>
-
+    </c:if>
     </c:forEach>
     </p>
 </section>

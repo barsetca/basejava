@@ -17,16 +17,14 @@
 <section>
     <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
-        <% String action = request.getParameter("action");
-            if (action.equals("add")) {%>
-        <a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/back-button.png" width="150" height="45"></a>
-        <% } else {%>
+        <input type="hidden" name="action" value="<%=request.getParameter("action")%>">
+
         <a href="resume"><img src="img/back-button.png" width="150" height="45"></a>
-        <% } %> <br/>
+
+        <h2>Имя:</h2>
         <dl>
-            <dt>Имя:</dt>
-            <dd><input type="text" required name="fullName" size=50 value="${resume.fullName}"
-                       placeholder="Обязательное поле"></dd>
+            <input type="text" required name="fullName" size=50 value="${resume.fullName}"
+                   placeholder="Обязательное поле">
         </dl>
         <h3>Контакты:</h3>
         <c:forEach var="type" items="<%=ContactType.values()%>">
@@ -35,129 +33,90 @@
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <h3>Описание:</h3>
-        <table>
+        <hr>
 
-            <c:forEach var="type" items="<%=SectionType.values()%>">
-                <c:set var="section" value="${resume.getSection(type)}"/>
-                <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSections"/>
-
-                <tr>
-                    <td><b>${type.title}</b></td>
-                </tr>
-
-                <c:choose>
-                    <c:when test="${(type.name().equals('OBJECTIVE'))}">
-
-                        <tr>
-                            <td><input type="text" required name="${type.name()}" size=75
-                                       value="${resume.getSection(type)}"
-                                       placeholder="Обязательное поле"></td>
-                        </tr>
-
-                    </c:when>
-                    <c:when test="${(type.name().equals('PERSONAL'))}">
-
-                        <tr>
-                            <td><textarea name='${type}' cols=80 rows=5><%=section%></textarea></td>
-                        <tr>
-                    </c:when>
+        <c:forEach var="type" items="<%=SectionType.values()%>">
+            <c:set var="section" value="${resume.getSection(type)}"/>
+            <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSections"/>
+            <h3>${type.title}</h3>
 
 
-                    <c:when test="${(type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATION'))}">
-                        <jsp:useBean id="type" type="com.urise.webapp.model.SectionType"/>
-                        <%
-                            if (resume.getSection(type).toString().equals("null")) {
-                                resume.setSection(type, new ListSection(""));
-                            }
-                        %>
-                        <tr>
-                            <td><textarea name='${type}' cols=80
-                                          rows=5><%=String.join("\n", ((ListSection) section).getItems())%></textarea>
-                            </td>
-                        </tr>
-                    </c:when>
+            <c:choose>
+                <c:when test="${(type.name().equals('OBJECTIVE'))}">
+                    <input type="text" name="${type.name()}" size=79 value="${resume.getSection(type)}">
+                </c:when>
 
-                    <c:when test="${(type.name().equals('EXPERIENCE')|| type.name().equals('EDUCATION'))}">
+                <c:when test="${(type.name().equals('PERSONAL'))}">
+                    <textarea name="${type}" cols=80 rows=5><%=section%></textarea>
+                </c:when>
 
+                <c:when test="${(type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATION'))}">
+                    <jsp:useBean id="type" type="com.urise.webapp.model.SectionType"/>
 
-                        <c:forEach var="place" items="<%=((PlaceSection) section).getPlaces()%>">
-                            <tr>
-                                <td>Название учреждения</td>
-                            </tr>
+                    <textarea name="${type}" cols=80
+                              rows=5><%=String.join("\n", ((ListSection) section).getItems())%></textarea>
+                </c:when>
 
-                            <tr>
-                                <td><textarea name="${type.name()}" rows="1" cols="80">${place.link.name}</textarea>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Сайт (url) учреждения</td>
-                            </tr>
-                            <tr>
-                                <td><textarea name="${type.name()}" rows="1" cols="80">${place.link.url}</textarea></td>
-                            </tr>
+                <c:when test="${(type.name().equals('EXPERIENCE')|| type.name().equals('EDUCATION'))}">
+                    <c:forEach var="place" items="<%=((PlaceSection) section).getPlaces()%>">
+                        <dl>
+                            <dt>Название учреждения</dt>
+                            <dd><input type="text" name="${type.name()}" size=100 value="${place.link.name}"></dd>
+                        </dl>
+                        <dl>
+                            <dt>Сайт (url) учреждения</dt>
+                            <dd><input type="text" name="${type.name()}" size=100 value="${place.link.url}"></dd>
+                        </dl>
+
+                        <div style="margin-left: 30px">
                             <c:forEach var="descriptonList" items="${place.listDescriptions}">
                                 <jsp:useBean id="descriptonList" type="com.urise.webapp.model.Place.PlaceDescription"/>
-                                <tr>
-                                    <td>Название должности/специальности</td>
-                                </tr>
-                                <tr>
-                                    <td><textarea name="${type.name()}" rows="1"
-                                                  cols="80">${descriptonList.title}</textarea></td>
-                                </tr>
-                                <tr>
-                                    <td>Дата начала</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" name="${type.name()}" size=10
+                                <dl>
+                                    <dt>Должность/специальность</dt>
+                                    <dd>
+                                        <input type="text" name="${type.name()}" size=79
+                                               value="${descriptonList.title}">
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>Начальная дата</dt>
+                                    <dd><input type="text" name="${type.name()}" size=10
                                                value="<%=DateUtil.localDateToString(descriptonList.getStartDate())%>"
-                                               placeholder="dd/MM/yyyy">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Дата завершения</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" name="${type.name()}" size=10
+                                               placeholder="dd/MM/yyyy"></dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>Дата завершения:</dt>
+                                    <dd><input type="text" name="${type.name()}" size=10
                                                value="<%=DateUtil.localDateToString(descriptonList.getEndDate())%>"
-                                               placeholder="dd/MM/yyyy">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Описание</td>
-                                </tr>
-                                <tr>
-                                    <td><textarea name="${type.name()}" rows="5"
-                                                  cols="80">${descriptonList.description}</textarea></td>
-                                </tr>
+                                               placeholder="dd/MM/yyyy"></dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>Описание</dt>
+                                    <dd><textarea name="${type.name()}" rows="5"
+                                                  cols="80">${descriptonList.description}</textarea></dd>
+                                </dl>
                             </c:forEach>
-                        </c:forEach>
+                        </div>
+                    </c:forEach>
 
-                    </c:when>
+                </c:when>
 
-                </c:choose>
+            </c:choose>
 
-            </c:forEach>
-        </table>
-
+        </c:forEach>
         <hr>
-        <button type="submit">Сохранить</button>
-        <% if (action.equals("add")) {%>
-        <button><a href="resume?uuid=${resume.uuid}&action=delete">Отменить</a></button>
-        <br/>
-        <% } else {%>
-        <button onclick="window.history.back()">Отменить</button>
-        <button><a href="resume?uuid=${resume.uuid}&action=addEducation">Добавить учебное заведение</a></button>
-        <button><a href="resume?uuid=${resume.uuid}&action=addExperience">Добавить место работы</a></button>
+
+        <button type="submit" type="button">Сохранить</button>
+        <button><a href="resume">Отменить</a></button>
         <br/><br/>
+        <font color="blue"><i>Дополнительные учреждения работы/учёбы можно добавить после сохранения документа<br/></i></font>
         <font color="blue"><i>Для удаления информации о месте работы/учёбы достаточно удалить его название и
             Сохранить</i></font>
-        <% } %>
+
     </form>
 </section>
-
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

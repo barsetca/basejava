@@ -148,21 +148,21 @@ public class ResumeTestData {
         Resume resume = new Resume(uuid, fullName);
         resume.setContact(ContactType.MOBIL, mobil.get(count));
         resume.setContact(ContactType.E_MAIL, mail.get(count));
-        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
+//        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
         resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
         resume.setSection(SectionType.ACHIEVEMENT,
                 new ListSection(achievement.get(count), qualification.get(count)));
         resume.setSection(SectionType.QUALIFICATION,
                 new ListSection(new ArrayList<>(Arrays.asList(qualification.get(count), qualification.get(count)))));
-        resume.setSection(SectionType.EXPERIENCE,
-                new PlaceSection(Arrays.asList(
-                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
-                                Arrays.asList(
-                                        new Place.PlaceDescription(
-                                                startDate.get(count),
-                                                endDate.get(count),
-                                                experienceTitle.get(count),
-                                                "description" + count * 10))))));
+//        resume.setSection(SectionType.EXPERIENCE,
+//                new PlaceSection(Arrays.asList(
+//                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
+//                                Arrays.asList(
+//                                        new Place.PlaceDescription(
+//                                                startDate.get(count),
+//                                                endDate.get(count),
+//                                                experienceTitle.get(count),
+//                                                "description" + count * 10))))));
         resume.setSection(SectionType.EDUCATION,
                 new PlaceSection(Arrays.asList(
                         new Place(educationName.get(count), "http//" + count,

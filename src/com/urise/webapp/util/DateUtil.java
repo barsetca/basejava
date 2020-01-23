@@ -14,7 +14,7 @@ public class DateUtil {
     }
 
     public static String localDateToString(LocalDate localDate) {
-        if (localDate.equals(EMPTY)) {
+        if (localDate.isAfter(LocalDate.now())) {
             return "";
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");

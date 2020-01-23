@@ -4,6 +4,7 @@ import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.HtmlUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,19 +37,22 @@ public class ResumeServlet extends HttpServlet {
     }
     */
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume resume;
+        String action = request.getParameter("action");
+
         final boolean isCreate = (uuid == null || uuid.length() == 0);
-        if (isCreate) {
+        Resume resume;
+        if (isCreate || action.equals("add")) {
             resume = new Resume(fullName);
+            storage.save(resume);
         } else {
             resume = storage.get(uuid);
             resume.setFullName(fullName);
         }
+
 
         for (ContactType contactType : ContactType.values()) {
             String value = request.getParameter(contactType.name());
@@ -70,9 +75,9 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATION":
-                        String[] lines = value.split("\n");
-                        List<String> list = new ArrayList<>();
-                        Stream.of(lines).forEach(v -> list.add(v.trim()));
+                        String[] lines = value.split(" *\n");
+                        List<String> list = Arrays.asList(lines);
+//                        Stream.of(lines).forEach(v -> list.add(v.trim()));
                         ListSection listSection = new ListSection(list);
                         resume.setSection(sectionType, listSection);
                         break;
@@ -106,36 +111,33 @@ public class ResumeServlet extends HttpServlet {
                 resume.getSectionsMap().remove(sectionType);
             }
         }
-        storage.update(resume);
+        if (isCreate) {
+            storage.save(resume);
+        } else {
+            storage.update(resume);
+        }
         response.sendRedirect("resume");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
-        Resume resume;
-
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
+        Resume resume;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
+            case "view":
+                resume = storage.get(uuid);
+                break;
             case "add":
-                resume = new Resume("");
-                resume.setSection(SectionType.OBJECTIVE, LineSection.EMPTY);
-                resume.setSection(SectionType.PERSONAL, LineSection.EMPTY);
-                resume.setSection(SectionType.ACHIEVEMENT, ListSection.EMPTY);
-                resume.setSection(SectionType.QUALIFICATION, ListSection.EMPTY);
-                resume.setSection(SectionType.EXPERIENCE, new PlaceSection(Place.EMPTY));
-                resume.setSection(SectionType.EDUCATION, new PlaceSection(Place.EMPTY));
-                storage.save(resume);
+                resume = Resume.EMPTY;
                 break;
             case "addEducation":
             case "addExperience":
@@ -143,17 +145,12 @@ public class ResumeServlet extends HttpServlet {
                 resume = storage.get(uuid);
                 addSectionsDoGet(resume, action);
                 break;
-            case "view":
-                resume = storage.get(uuid);
-                break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", resume);
         request.getRequestDispatcher(
-                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" :
-                        "/WEB-INF/jsp/edit.jsp")
+                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
     }
-
 }

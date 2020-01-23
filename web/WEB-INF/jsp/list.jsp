@@ -18,6 +18,9 @@
             <th>e-mail</th>
             <th>Удалить</th>
             <th>Изменить</th>
+            <th>Добавить<br/>"Образование"</th>
+            <th>Добавить<br/>"Опыт работы"</th>
+
         </tr>
         <c:set var="n" value="0"/>
         <c:forEach items="${resumes}" var="resume">
@@ -33,6 +36,12 @@
                 </td>
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit2.con" width="25"
                                                                                          height="25"></a></td>
+                <td align="center"><a href="resume?uuid=${resume.uuid}&action=addEducation"><img src="img/education.png"
+                                                                                                 width="30"
+                                                                                                 height="30"></a></td>
+                <td align="center"><a href="resume?uuid=${resume.uuid}&action=addExperience"><img src="img/workPNG.png"
+                                                                                                  width="30"
+                                                                                                  height="30"></a></td>
             </tr>
         </c:forEach>
     </table>

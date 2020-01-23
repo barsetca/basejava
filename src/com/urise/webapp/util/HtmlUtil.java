@@ -39,11 +39,15 @@ public class HtmlUtil {
                 return "<li>" + abstractSections.toString() + "</li>";
             case "ACHIEVEMENT":
             case "QUALIFICATION":
-
                 ListSection listSection = (ListSection) abstractSections;
                 StringJoiner joinerList = new StringJoiner("");
+
                 for (String string : listSection.getItems()) {
-                    joinerList.add("<li>" + string + "</li>");
+                    if (string.equals("")) {
+                        continue;
+                    }
+                    joinerList.add("<li>" + string.trim() + "</li>");
+
                 }
                 return joinerList.toString();
 
@@ -73,5 +77,9 @@ public class HtmlUtil {
             default:
                 throw new IllegalStateException("Unexpected value: " + sectionType);
         }
+    }
+
+    public static boolean isEmpty(String str) {
+        return str == null || str.trim().length() == 0;
     }
 }

@@ -1,3 +1,8 @@
+section {
+    width: 900px;
+    margin: auto;
+}
+
 header {
     background: none repeat scroll 0 0 #A6C9E2;
     color: #2E6E9E;
@@ -15,7 +20,7 @@ footer {
 
 dl {
     background: none repeat scroll 0 0 #FAFAFA;
-    margin: 8px 0;
+    margin: 10px 0;
     padding: 0;
 }
 
@@ -29,3 +34,8 @@ dd {
     margin-left: 8px;
     vertical-align: top;
 }
+
+h2, h3 {
+    margin: 15px 0 5px;
+}
+
