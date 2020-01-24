@@ -4,9 +4,7 @@ import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 import com.urise.webapp.util.DateUtil;
-import com.urise.webapp.util.HtmlUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +13,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.urise.webapp.util.ServletUtil.addSectionsDoGet;
 
@@ -52,7 +49,6 @@ public class ResumeServlet extends HttpServlet {
             resume = storage.get(uuid);
             resume.setFullName(fullName);
         }
-
 
         for (ContactType contactType : ContactType.values()) {
             String value = request.getParameter(contactType.name());

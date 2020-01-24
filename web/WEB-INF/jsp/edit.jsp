@@ -20,6 +20,7 @@
         <input type="hidden" name="action" value="<%=request.getParameter("action")%>">
 
         <a href="resume"><img src="img/back-button.png" width="150" height="45"></a>
+        <button type="submit" type="button"><img src="img/save.png" width="50" height="50"></button>
 
         <h2>Имя:</h2>
         <dl>
