@@ -27,10 +27,8 @@
         <c:forEach var="sectionEntry" items="${resume.sectionsMap}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<com.urise.webapp.model.SectionType, com.urise.webapp.model.AbstractSections>"/>
-    <h3><%=sectionEntry.getKey().getTitle()%>
-    </h3>
-    <ul><%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%></ul>
-    </c:forEach>
+            <%=HtmlUtil.toHtmlSection(sectionEntry.getKey(), sectionEntry.getValue())%>
+        </c:forEach>
     </p>
     <br/>
     <a href="resume"><img src="img/back-button.png" width="150" height="45"></a>

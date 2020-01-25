@@ -16,9 +16,9 @@ public class TestData {
     public static final String UUID_4 = UUID.randomUUID().toString();
 
     static {
-        resume1 = ResumeTestData.createResume(UUID_1, "a");
-        resume2 = ResumeTestData.createResume(UUID_2, "b");
-        resume3 = ResumeTestData.createResume(UUID_3, "c");
-        resume4 = ResumeTestData.createResume(UUID_4, "d");
+        resume1 = ResumeTestData.createResume(UUID_1, "fullName_1");
+        resume2 = ResumeTestData.createResume(UUID_2, "fullName_2");
+        resume3 = ResumeTestData.createResume(UUID_3, "fullName_3");
+        resume4 = ResumeTestData.createResume(UUID_4, "fullName_4");
     }
 }

@@ -21,7 +21,7 @@ public class HtmlUtil {
             case "PROFILE_STACKOVERFLOW":
             case "HOME_PAGE":
             case "PROFILE_GITHUB":
-                return contactType.getTitle() + ": " + "<a href=" + value + ">" + value + "</a>";
+                return contactType.getTitle() + ": " + "<a href=" + value + "target=\"_blank\">" + value + "</a>";
             default:
                 throw new IllegalStateException("Unexpected value: " + contactType);
         }
@@ -29,6 +29,7 @@ public class HtmlUtil {
 
     public static String toHtmlSection(SectionType sectionType, AbstractSections abstractSections) {
         String s = abstractSections.toString();
+        String type = "<h3>" + sectionType.getTitle() + "</h3>";
 
         if (s.equals("null") || s.equals("")) {
             return "";
@@ -36,7 +37,7 @@ public class HtmlUtil {
         switch (sectionType.name()) {
             case "OBJECTIVE":
             case "PERSONAL":
-                return "<li>" + abstractSections.toString() + "</li>";
+                return type + "<ul><li>" + abstractSections.toString() + "</li></ul>";
             case "ACHIEVEMENT":
             case "QUALIFICATION":
                 ListSection listSection = (ListSection) abstractSections;
@@ -49,11 +50,14 @@ public class HtmlUtil {
                     joinerList.add("<li>" + string.trim() + "</li>");
 
                 }
-                return joinerList.toString();
+                return type + "<ul>" + joinerList.toString() + "</ul>";
 
             case "EXPERIENCE":
             case "EDUCATION":
                 PlaceSection placeSection = (PlaceSection) abstractSections;
+                if (placeSection.getPlaces().size() == 0) {
+                    return "";
+                }
                 StringJoiner joinerPlace = new StringJoiner("<br/>");
                 List<Place> listPlaces = placeSection.getPlaces();
 
@@ -73,7 +77,7 @@ public class HtmlUtil {
                         joinerPlace.add(description.getDescription() + "<br/>");
                     }
                 }
-                return joinerPlace.toString();
+                return type + "<ul>" + joinerPlace.toString() + "</ul>";
             default:
                 throw new IllegalStateException("Unexpected value: " + sectionType);
         }

@@ -122,12 +122,12 @@ public class ResumeTestData {
     }
 
     //Part for create Resume from AbstractStorageTest
-    private static List<String> mail = Arrays.asList("1@1", "2@2", "3@3", "4@4");
-    private static List<String> mobil = Arrays.asList("111", "222", "333", "444");
+    private static List<String> mail = Arrays.asList("email@1.test", "email@1.test", "email@1.test", "email@1.test");
+    private static List<String> mobil = Arrays.asList("mobil1", "mobil2", "mobil3", "mobil4");
     private static List<String> objective = Arrays.asList("position1", "position2", "position3", "position4");
-    private static List<String> personal = Arrays.asList("uno", "dos", "tres", "quatro");
-    private static List<String> achievement = Arrays.asList("one", "two", "three", "four");
-    private static List<String> qualification = Arrays.asList("cinco", "seis", "siete", "ocho");
+    private static List<String> personal = Arrays.asList(" personal", " persona2", " persona3", " persona4");
+    private static List<String> achievement = Arrays.asList("achievement_one", "achievemen_ttwo", "achievement_three", "achievement_four");
+    private static List<String> qualification = Arrays.asList("qualification1", "qualification2", "qualification3", "qualification4");
     private static List<String> experienceName = Arrays.asList("company1", "company2", "company3", "company4");
     private static List<String> experienceTitle = Arrays.asList("number1", "number2", "number3", "number4");
     private static List<String> educationName = Arrays.asList("school1", "school2", "school3", "school4");
@@ -148,21 +148,21 @@ public class ResumeTestData {
         Resume resume = new Resume(uuid, fullName);
         resume.setContact(ContactType.MOBIL, mobil.get(count));
         resume.setContact(ContactType.E_MAIL, mail.get(count));
-//        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
+        resume.setSection(SectionType.OBJECTIVE, new LineSection(objective.get(count)));
         resume.setSection(SectionType.PERSONAL, new LineSection(personal.get(count)));
         resume.setSection(SectionType.ACHIEVEMENT,
                 new ListSection(achievement.get(count), qualification.get(count)));
         resume.setSection(SectionType.QUALIFICATION,
                 new ListSection(new ArrayList<>(Arrays.asList(qualification.get(count), qualification.get(count)))));
-//        resume.setSection(SectionType.EXPERIENCE,
-//                new PlaceSection(Arrays.asList(
-//                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
-//                                Arrays.asList(
-//                                        new Place.PlaceDescription(
-//                                                startDate.get(count),
-//                                                endDate.get(count),
-//                                                experienceTitle.get(count),
-//                                                "description" + count * 10))))));
+        resume.setSection(SectionType.EXPERIENCE,
+                new PlaceSection(Arrays.asList(
+                        new Place(new PlaceLink(experienceName.get(count), "url" + count),
+                                Arrays.asList(
+                                        new Place.PlaceDescription(
+                                                startDate.get(count),
+                                                endDate.get(count),
+                                                experienceTitle.get(count),
+                                                "description" + count * 10))))));
         resume.setSection(SectionType.EDUCATION,
                 new PlaceSection(Arrays.asList(
                         new Place(educationName.get(count), "http//" + count,

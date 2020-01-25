@@ -16,6 +16,7 @@ public class ServletUtil {
     public static void addSectionsDoGet(Resume resume, String action) {
         for (SectionType sectionType : SectionType.values()) {
             AbstractSections section = resume.getSection(sectionType);
+
             switch (sectionType) {
                 case OBJECTIVE:
                 case PERSONAL:
@@ -34,7 +35,7 @@ public class ServletUtil {
                         addPlace(sectionType, resume);
                         break;
                     }
-                    if (section == null) {
+                    if (section == null || ((PlaceSection) section).getPlaces().size() == 0) {
                         resume.setSection(sectionType, new PlaceSection(Place.EMPTY));
                     }
                     break;
@@ -43,7 +44,7 @@ public class ServletUtil {
                         addPlace(sectionType, resume);
                         break;
                     }
-                    if (section == null) {
+                    if (section == null || ((PlaceSection) section).getPlaces().size() == 0) {
                         resume.setSection(sectionType, new PlaceSection(Place.EMPTY));
                     }
                     break;

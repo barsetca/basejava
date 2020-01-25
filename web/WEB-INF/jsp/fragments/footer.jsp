@@ -1,4 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <footer>
-    Школа <a href="htpp://u-rise/com/" target="_blank">U-Rise</a>. Курс JavaSE + Web.
+    Школа <a href="http://javaops.ru/" target="_blank">U-Rise</a>. Проект JavaSE + Web: DB Resume
 </footer>
