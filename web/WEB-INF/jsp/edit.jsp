@@ -111,6 +111,7 @@
 
         <button type="submit" type="button">Сохранить</button>
         <button><a href="resume">Отменить</a></button>
+        <button type="submit" type="button"><img src="img/save.png" width="50" height="50"></button>
         <br/><br/>
         <font color="blue"><i>Дополнительные учреждения работы/учёбы можно добавить после сохранения документа<br/></i></font>
         <font color="blue"><i>Для удаления информации о месте работы/учёбы достаточно удалить его название и
