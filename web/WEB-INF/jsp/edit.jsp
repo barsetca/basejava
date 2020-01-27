@@ -22,6 +22,7 @@
         <a href="resume"><img src="img/back-button.png" width="150" height="45"></a>
         <button type="submit" type="button"><img src="img/save.png" width="50" height="50"></button>
 
+
         <h2>Имя:</h2>
         <dl>
             <input type="text" required name="fullName" size=50 value="${resume.fullName}"
@@ -111,7 +112,7 @@
 
         <button type="submit" type="button">Сохранить</button>
         <button><a href="resume">Отменить</a></button>
-        <button type="submit" type="button"><img src="img/save.png" width="50" height="50"></button>
+
         <br/><br/>
         <font color="blue"><i>Дополнительные учреждения работы/учёбы можно добавить после сохранения документа<br/></i></font>
         <font color="blue"><i>Для удаления информации о месте работы/учёбы достаточно удалить его название и
